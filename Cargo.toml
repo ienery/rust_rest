@@ -1,0 +1,10 @@
+[package]
+name = "rust_rest"
+version = "0.1.0"
+authors = ["ienery <ienery@yandex.ru>"]
+
+[dependencies]
+iron = "*"
+router = "*"
+params = "*"
+rocksdb = { git = "https://github.com/paritytech/rust-rocksdb" }
