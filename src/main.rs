@@ -3,6 +3,9 @@ extern crate router;
 extern crate rocksdb;
 extern crate params;
 
+#[macro_use]
+extern crate serde_json;
+
 use iron::{Iron};
 
 use router::{Router};

@@ -8,3 +8,4 @@ iron = "*"
 router = "*"
 params = "*"
 rocksdb = { git = "https://github.com/paritytech/rust-rocksdb" }
+serde_json = "*"

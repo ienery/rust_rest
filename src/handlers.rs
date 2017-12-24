@@ -2,7 +2,8 @@ use iron::prelude::*;
 use iron::{Request, Response, IronResult};
 use iron::status;
 
-use params::Params;
+use params::{Params, Value};
+
 use iron::mime::Mime;
 use router::{Router};
 
@@ -30,8 +31,30 @@ pub fn query_handler2(req: &mut Request) -> IronResult<Response> {
     }
 
     let content_type = "application/json".parse::<Mime>().unwrap();
-    let req_ref = req.get_ref::<Params>();
+    let map = req.get_ref::<Params>().unwrap();
+    println!("{:?}", map);
 
-    println!("{:?}", req_ref);
-    Ok(Response::with((content_type, status::Ok, "{\"success\": \"true\"}")))
+    // match map.find(&["key"]) {
+    //     Some(&Value::String(ref key)) => assert_eq!(key, "value"),
+    //     _ => panic!("Unexpected parameter type!"),
+    // }
+
+    let mut value = "";
+    if let Some(&Value::String(ref key)) = map.find(&["key"]) {
+        //assert_eq!(key, "value");
+        println!("{}", key);
+        value = key;
+        println!("{}", value);
+    } else {
+        panic!("Unexpected parameter type!");
+    }
+   
+    let result = json!({
+        "success": true,
+        "body": {
+            "key": value
+        }
+    });
+
+    Ok(Response::with((content_type, status::Ok, result.to_string())))
 }
