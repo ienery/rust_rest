@@ -5,7 +5,10 @@ authors = ["ienery <ienery@yandex.ru>"]
 
 [dependencies]
 iron = "*"
+rocksdb = { git = "https://github.com/paritytech/rust-rocksdb" }
 router = "*"
 params = "*"
-rocksdb = { git = "https://github.com/paritytech/rust-rocksdb" }
 serde_json = "*"
+bodyparser = "*"
+persistent = "*"
+serde_derive = "*"

@@ -3,14 +3,25 @@ extern crate router;
 extern crate rocksdb;
 extern crate params;
 
+extern crate bodyparser;
+extern crate persistent;
+#[macro_use]
+extern crate serde_derive;
+
 #[macro_use]
 extern crate serde_json;
 
 use iron::{Iron};
 
+use persistent::Read;
+use iron::status;
+use iron::prelude::*;
+
 use router::{Router};
 
 mod handlers;
+
+const MAX_BODY_LENGTH: usize = 1024 * 1024 * 10;
 
 fn main() {
     //let mut db = DB::open_default("./storage").unwrap();
@@ -19,8 +30,10 @@ fn main() {
     router.get("/", handlers::handler, "handler");
     router.post("/post", handlers::query_handler2, "query_handler2");
     router.get("/:query", handlers::query_handler, "query_handler");
-    
-    Iron::new(router).http("localhost:3000").unwrap();
+
+    let mut chain = Chain::new(router);
+    chain.link_before(Read::<bodyparser::MaxBodyLength>::one(MAX_BODY_LENGTH));
+    Iron::new(chain).http("localhost:3000").unwrap();
 
     // fn handler(_: &mut Request) -> IronResult<Response> {
     //     Ok(Response::with((status::Ok, "OK")))
