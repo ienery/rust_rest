@@ -2,13 +2,12 @@ use iron::prelude::*;
 use iron::{Request, Response, IronResult};
 use iron::status;
 
-use params::{Params, Value};
-
 use iron::mime::Mime;
 use router::{Router};
 
 use rocksdb::{DB, Writable};
 use bodyparser;
+use serde_json::Value;
 use serde_json::Value::Object;
 
 pub fn handler(_: &mut Request) -> IronResult<Response> {
@@ -33,28 +32,16 @@ pub fn query_handler3(req: &mut Request) -> IronResult<Response> {
     }
 
     let content_type = "application/json".parse::<Mime>().unwrap();
-    let map = req.get_ref::<Params>().unwrap();
-    println!("{:?}", map);
 
     // match map.find(&["key"]) {
     //     Some(&Value::String(ref key)) => assert_eq!(key, "value"),
     //     _ => panic!("Unexpected parameter type!"),
     // }
-
-    let mut value = "";
-    if let Some(&Value::String(ref key)) = map.find(&["key"]) {
-        //assert_eq!(key, "value");
-        println!("{}", key);
-        value = key;
-        println!("{}", value);
-    } else {
-        panic!("Unexpected parameter type!");
-    }
    
     let result = json!({
         "success": true,
         "body": {
-            "key": value
+            "key": "22"
         }
     });
 
@@ -62,8 +49,11 @@ pub fn query_handler3(req: &mut Request) -> IronResult<Response> {
 }
 
 pub fn query_handler2(req: &mut Request) -> IronResult<Response> {
+    let content_type = "application/json".parse::<Mime>().unwrap();
     //let json_body = req.get::<bodyparser::Json>();
     //println!("{:?}", json_body);
+
+    let mut db = DB::open_default("./storage").unwrap();
 
     if let Ok(Some(json_body)) = req.get::<bodyparser::Json>() {
         println!("Parsed body:\n{:?}", json_body);
@@ -79,15 +69,27 @@ pub fn query_handler2(req: &mut Request) -> IronResult<Response> {
             println!("{}", k);
             println!("{}", v);
             
-            let mut db = DB::open_default("./storage").unwrap();
+
             db.put(&k.as_bytes(), &v.as_bytes());
             //db.put(field_names[0].to_string().as_bytes(), object[field_names[0].as_bytes());
 
-            match db.get(&k.as_bytes()) {
-                Ok(Some(value)) => println!("retrieved value {}", value.to_utf8().unwrap()),
-                Ok(None) => println!("value not found"),
-                Err(e) => println!("operational problem encountered: {}", e),
+            if let Ok(getVal) = db.get(&k.as_bytes()) {
+                if let Some(value) = getVal {
+                    //println!("retrieved value {}", value.to_utf8().unwrap());
+                    let result = value.to_utf8().unwrap();
+                    //println!("retrieved value {}", result);
+
+                    // let result2 = json!({
+                    //     "success": true,
+                    //     "body": {
+                    //         key: result
+                    //     }
+                    // });
+                    return Ok(Response::with((content_type, status::Ok, result.to_string())))
+                    //return Ok(Response::with((content_type, status::Ok, "{\"test\": \"test2\"}")))
+                }
             }
+            
         }
     } else {
         panic!("Unexpected parameter type!");
@@ -99,7 +101,12 @@ pub fn query_handler2(req: &mut Request) -> IronResult<Response> {
         }
     });
 
-    let content_type = "application/json".parse::<Mime>().unwrap();
+    // match db.get(&k.as_bytes()) {
+    //     Ok(Some(value)) => println!("retrieved value {}", value.to_utf8().unwrap()),
+    //     Ok(None) => println!("value not found"),
+    //     Err(e) => println!("operational problem encountered: {}", e),
+    // }
+
     Ok(Response::with((content_type, status::Ok, result.to_string())))
 }
 // pub fn update_record(req: &mut Request) -> IronResult<Response> {
