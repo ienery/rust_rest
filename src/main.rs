@@ -5,6 +5,8 @@ extern crate params;
 
 extern crate bodyparser;
 extern crate persistent;
+extern crate serde;
+
 #[macro_use]
 extern crate serde_derive;
 
