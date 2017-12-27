@@ -63,57 +63,63 @@ pub fn query_handler3(req: &mut Request) -> IronResult<Response> {
 pub fn query_handler2(req: &mut Request) -> IronResult<Response> {
     let content_type = "application/json".parse::<Mime>().unwrap();
     let json_body = req.get::<bodyparser::Json>();
+    
     //let struct_body = req.get::<bodyparser::Struct<MyStructure>>();
     //let body = req.get::<bodyparser::Raw>();
-    println!("{:?}", json_body);
-    if let Ok(Some(one)) = json_body {
-        let str1 = one.to_string();
-        let v: Value = serde_json::from_str(&str1).unwrap();
-        if let Some(z) = v["key"].as_str() {
-            println!("{}", v["key"].as_str().unwrap());
-        }   
+    //println!("{:?}", json_body);
+
+    if let Ok(Some(json_parse)) = json_body {
+        println!("json_parse: {:?}", json_parse);
+        if let Object(object) = json_parse {
+            //println!("{:?}", object);
+            let field_names: Vec<_> = object.keys().collect();
+            //println!("{:?}", field_names);
+            let key = field_names[0];
+            let value = object[key].as_str().unwrap();
+
+            println!("key: {}", key);
+            println!("value: {}", value);
+
+            let mut db = DB::open_default("./storage").unwrap();
+            db.put(&key.as_bytes(), &value.as_bytes()).unwrap();
+
+            if let Ok(get_val) = db.get(&key.as_bytes()) {
+                if let Some(val) = get_val {
+                    let val_result = val.to_utf8().unwrap();
+                    let key_result = key.to_string();
+                    
+                    let result = json!({
+                        "success": true,
+                        "body": {
+                            key_result: val_result
+                        }
+                    });
+
+                    return Ok(Response::with((content_type, status::Ok, result.to_string())))
+                } 
+            }
+            
+        }
+        /*
+        let value = one[key].as_str().unwrap();
+        //let str1 = one.to_string();
+        //let v: Value = serde_json::from_str(&str1).unwrap();
+        //if let Some(z) = one["key"].as_str() {
+            println!("{}", value);
+        //}   
         // println!("{:?}", one);
         // if let Object(two) = one {
         //     println!("{:?}", two["key"]);
         //     if let Some(val3) = two["key"].as_str() {
         //         println!("{:?}", val3);
-
         //     }
-            
         // }
+        */
     }
-    //let mut db = DB::open_default("./storage").unwrap();
-
-    // if let Ok(Some(struct_body)) = req.get::<bodyparser::Struct<MyStructure>>() {
-    //     println!("{:?}", struct_body);
-    //     println!("{}", struct_body.key);
-    //     println!("{:?}", struct_body.value);
-
-    //     let mut k = struct_body.key;
-    //     let mut v = struct_body.value;
-
-        // let mut db = DB::open_default("./storage").unwrap();
-        // db.put(&k.as_bytes(), &v.as_bytes());
-
-        // if let Ok(getVal) = db.get(&k.as_bytes()) {
-        //     if let Some(value) = getVal {
-        //         //println!("retrieved value {}", value.to_utf8().unwrap());
-        //         let val = value.to_utf8().unwrap();
-        //         let key = k;
-
-        //         let result = json!({
-        //             "success": true,
-        //             "body": {
-        //                 key: val
-        //             }
-        //         });
-        //         return Ok(Response::with((content_type, status::Ok, result.to_string())))
-        //     }
-        // }
-    //}
 
     Ok(Response::with((content_type, status::Ok, "{}")))
 }
+
 // pub fn update_record(req: &mut Request) -> IronResult<Response> {
 //     let content_type =  "application/json".parse::<Mime>().unwrap();
 //     let map = req.get_ref::<Params>().unwrap();
