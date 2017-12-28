@@ -54,11 +54,11 @@ pub fn query_handler3(req: &mut Request) -> IronResult<Response> {
 //     a: String
 // }
 
-// #[derive(Debug, Clone, Deserialize)]
-// struct MyStructure {
-//     key: String,
-//     value: Map<String, NestedStructure>
-// }
+#[derive(Debug, Clone, Serialize, Deserialize)]
+struct Payload {
+    key1: String,
+    key2: String
+}
 
 pub fn query_handler2(req: &mut Request) -> IronResult<Response> {
     let content_type = "application/json".parse::<Mime>().unwrap();
@@ -67,38 +67,46 @@ pub fn query_handler2(req: &mut Request) -> IronResult<Response> {
     //let struct_body = req.get::<bodyparser::Struct<MyStructure>>();
     //let body = req.get::<bodyparser::Raw>();
     //println!("{:?}", json_body);
-
+    println!("====================");
     if let Ok(Some(json_parse)) = json_body {
-        println!("json_parse: {:?}", json_parse);
+        //println!("json_parse: {:?}", json_parse);
         if let Object(object) = json_parse {
             //println!("{:?}", object);
             let field_names: Vec<_> = object.keys().collect();
             //println!("{:?}", field_names);
             let key = field_names[0];
-            let value = object[key].as_str().unwrap();
+            //let value = object[key].as_str().unwrap();
 
-            println!("key: {}", key);
-            println!("value: {}", value);
+            let value_obj = &object[key];
+            println!("value_obj: {:?}", value_obj);
+
+            let value_str = value_obj.to_string();
+            //println!("value_str: {:?}", value_str);
 
             let mut db = DB::open_default("./storage").unwrap();
-            db.put(&key.as_bytes(), &value.as_bytes()).unwrap();
+            db.put(&key.as_bytes(), &value_str.as_bytes()).unwrap();
 
             if let Ok(get_val) = db.get(&key.as_bytes()) {
                 if let Some(val) = get_val {
                     let val_result = val.to_utf8().unwrap();
+                    let value_parse: Payload = serde_json::from_str(&val_result).unwrap();
+                    println!("value_parse db: {:?}", value_parse);
+
                     let key_result = key.to_string();
                     
                     let result = json!({
                         "success": true,
                         "body": {
-                            key_result: val_result
+                            key_result: {
+                                "key1": value_parse.key1,
+                                "key2": value_parse.key2
+                            }
                         }
                     });
 
                     return Ok(Response::with((content_type, status::Ok, result.to_string())))
                 } 
             }
-            
         }
         /*
         let value = one[key].as_str().unwrap();
