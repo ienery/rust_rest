@@ -7,6 +7,8 @@ extern crate bodyparser;
 extern crate persistent;
 extern crate serde;
 
+extern crate rand;
+
 #[macro_use]
 extern crate serde_derive;
 
@@ -30,8 +32,13 @@ fn main() {
 
     let mut router = Router::new();
     router.get("/", handlers::handler, "handler");
-    router.post("/post", handlers::query_handler2, "query_handler2");
-    router.get("/:query", handlers::query_handler, "query_handler");
+    router.get("/all", handlers::query_handler_all, "query_handler_all");
+    // router.get("/:query", handlers::query_handler, "query_handler");
+
+    router.post("/createrecord", handlers::create_record, "create_record");
+    router.post("/readrecord", handlers::read_record, "read_record");
+    router.post("/deleterecord", handlers::delete_record, "delete_record");
+    router.post("/readrecords", handlers::read_records, "read_records");
 
     let mut chain = Chain::new(router);
     chain.link_before(Read::<bodyparser::MaxBodyLength>::one(MAX_BODY_LENGTH));
