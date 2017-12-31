@@ -35,10 +35,10 @@ fn main() {
     router.get("/all", handlers::query_handler_all, "query_handler_all");
     // router.get("/:query", handlers::query_handler, "query_handler");
 
-    router.post("/createrecord", handlers::create_record, "create_record");
-    router.post("/readrecord", handlers::read_record, "read_record");
-    router.post("/deleterecord", handlers::delete_record, "delete_record");
-    router.post("/readrecords", handlers::read_records, "read_records");
+    router.post("/createtransact", handlers::create_transact, "create_transact");
+    router.post("/readtransact", handlers::read_transact, "read_transact");
+    router.post("/deletetransact", handlers::delete_transact, "delete_transact");
+    router.post("/readtransacts", handlers::read_transacts, "read_transacts");
 
     let mut chain = Chain::new(router);
     chain.link_before(Read::<bodyparser::MaxBodyLength>::one(MAX_BODY_LENGTH));
