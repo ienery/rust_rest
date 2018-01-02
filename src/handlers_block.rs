@@ -34,7 +34,8 @@ struct Transact {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 struct Block {
     transacts: Vec<Transact>,
-    block_id: String
+    block_id: String,
+    parent_block_id: String
 }
 
 pub fn create_block(req: &mut Request) -> IronResult<Response> {
@@ -55,13 +56,83 @@ pub fn create_block(req: &mut Request) -> IronResult<Response> {
     // Записать транзакции в блок.
     let block_id = rand::random::<(u64)>().to_string();
 
-    let block = Block {
-        transacts: transacts,
-        block_id: block_id.to_owned()
-    };
-
     //println!("block {:?}", block);
     let mut db_block = DB::open_default("./rocksdb/block").unwrap();
+
+    // Найти предыдущий блок.
+    //let mut db_block = DB::open_default("./rocksdb/block").unwrap();
+    let mut iter = db_block.iterator(IteratorMode::Start);
+    let mut blocks: Vec<Block> = Vec::new();
+    for (key, value) in iter {
+        let k = str::from_utf8(&key).unwrap();
+        let v = str::from_utf8(&value).unwrap();
+        let block: Block = serde_json::from_str(&v).unwrap();
+        blocks.push(block);
+        //println!("Saw {:?}", block);
+    }
+
+    println!("blocks.len {:?}", blocks.len());
+
+    // Если блоков не было, то это первый блок.
+    let mut parent_block_id = "genesis";
+
+    if (blocks.len() == 0) {
+        println!("blocks.len 0");
+    } else {
+        // Если блоки были, то найти последний в цепочке,
+        // Он ни для кого не является родителем.
+        parent_block_id = "no genesis";
+
+        for block_out in &blocks {
+            let block_out_id = &block_out.block_id;
+            println!("Saw block_out_id {:?}", block_out_id);
+            //let mut hasParent = false;
+            let mut hasParents: Vec<bool> = Vec::new();
+            for block_in in &blocks {
+                let block_in_parent_block_id = &block_in.parent_block_id;
+                println!("Saw block_in_parent_block_id {:?}", block_in_parent_block_id);
+
+                if (block_out_id == block_in_parent_block_id) {
+                    hasParents.push(true);
+                } else {
+                    hasParents.push(false);
+                    //parent_block_id = block_out_id;
+                }
+            }
+      
+            let mut hasParent = false;
+            //let hasParentsLen = hasParents.len();
+
+            for (index, hasParentOne) in hasParents.into_iter().enumerate() {
+                println!("index hasParentOne {}: {}", index, hasParentOne);
+                //println!("hasParents.len() {}", hasParentsLen);
+                
+                if (hasParentOne == true) {
+                    hasParent = true;
+                    break;
+                } 
+
+                hasParent = false;
+                
+            }
+
+            println!("hasParent {}", hasParent);
+            if (hasParent == false) {
+                parent_block_id = block_out_id;
+            }
+            
+        };
+    }
+
+    println!("parent_block_id {}", parent_block_id);
+
+    let block = Block {
+        transacts: transacts,
+        block_id: block_id.to_owned(),
+        parent_block_id: parent_block_id.to_owned()
+    };
+
+    
     let block_json = serde_json::to_string(&block).unwrap();
 
     db_block.put(&block_id.as_bytes(), &block_json.as_bytes()).unwrap();
@@ -97,6 +168,10 @@ pub fn read_blocks(req: &mut Request) -> IronResult<Response> {
         let block: Block = serde_json::from_str(&v).unwrap();
         blocks.push(block);
     }
+
+    // for block in &blocks {
+    //     println!("Saw {:?}", block);
+    // };
 
     let result = json!({
         "success": true,
