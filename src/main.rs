@@ -23,7 +23,8 @@ use iron::prelude::*;
 
 use router::{Router};
 
-mod handlers;
+ mod handlers_transact;
+mod handlers_block;
 
 const MAX_BODY_LENGTH: usize = 1024 * 1024 * 10;
 
@@ -31,14 +32,17 @@ fn main() {
     //let mut db = DB::open_default("./storage").unwrap();
 
     let mut router = Router::new();
-    router.get("/", handlers::handler, "handler");
-    router.get("/all", handlers::query_handler_all, "query_handler_all");
+    router.get("/", handlers_transact::handler, "handler");
+    router.get("/all", handlers_transact::query_handler_all, "query_handler_all");
     // router.get("/:query", handlers::query_handler, "query_handler");
 
-    router.post("/createtransact", handlers::create_transact, "create_transact");
-    router.post("/readtransact", handlers::read_transact, "read_transact");
-    router.post("/deletetransact", handlers::delete_transact, "delete_transact");
-    router.post("/readtransacts", handlers::read_transacts, "read_transacts");
+    router.post("/transact/create", handlers_transact::create_transact, "create_transact");
+    router.post("/transact/read", handlers_transact::read_transact, "read_transact");
+    router.post("/transact/delete", handlers_transact::delete_transact, "delete_transact");
+    router.post("/transacts/read", handlers_transact::read_transacts, "read_transacts");
+
+    router.post("/block/create", handlers_block::create_block, "create_block");
+    router.post("/blocks/read", handlers_block::read_blocks, "read_blocks");
 
     let mut chain = Chain::new(router);
     chain.link_before(Read::<bodyparser::MaxBodyLength>::one(MAX_BODY_LENGTH));

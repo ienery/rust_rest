@@ -134,7 +134,7 @@ pub fn query_handler2(req: &mut Request) -> IronResult<Response> {
 pub fn query_handler_all(req: &mut Request) -> IronResult<Response> {
     let content_type = "application/json".parse::<Mime>().unwrap();
    
-    let mut db = DB::open_default("./rocksdb/records").unwrap();
+    let mut db = DB::open_default("./rocksdb/transact").unwrap();
     let mut iter = db.iterator(IteratorMode::Start);
     for (key, value) in iter {
         let k = str::from_utf8(&key).unwrap();
@@ -204,7 +204,7 @@ pub fn create_transact(req: &mut Request) -> IronResult<Response> {
                 let transact_json = serde_json::to_string(&transact).unwrap();
                 //println!("record_json {:?}", record_json);
 
-                let mut db = DB::open_default("./rocksdb/records").unwrap();
+                let mut db = DB::open_default("./rocksdb/transact").unwrap();
                 db.put(&transact_id.as_bytes(), &transact_json.as_bytes()).unwrap();
 
                 let result = json!({
@@ -238,7 +238,7 @@ pub fn read_transact(req: &mut Request) -> IronResult<Response> {
     if let Ok(Some(request_read_transact)) = struct_body {
         let transact_id = request_read_transact.transact_id;
 
-        let mut db = DB::open_default("./rocksdb/records").unwrap();
+        let mut db = DB::open_default("./rocksdb/transact").unwrap();
         if let Ok(Some(transact_data)) = db.get(&transact_id.as_bytes()) {
             let transact_str = transact_data.to_utf8().unwrap();
             let transact: Transact = serde_json::from_str(&transact_str).unwrap();
@@ -265,7 +265,7 @@ pub fn delete_transact(req: &mut Request) -> IronResult<Response> {
     if let Ok(Some(request_read_transact)) = struct_body {
         let transact_id = request_read_transact.transact_id;
 
-        let mut db = DB::open_default("./rocksdb/records").unwrap();
+        let mut db = DB::open_default("./rocksdb/transact").unwrap();
         db.delete(&transact_id.as_bytes());
 
         let result = json!({
@@ -285,7 +285,7 @@ pub fn read_transacts(req: &mut Request) -> IronResult<Response> {
     let content_type = "application/json".parse::<Mime>().unwrap();
     println!("=== read transacts ===");
 
-    let mut db = DB::open_default("./rocksdb/records").unwrap();
+    let mut db = DB::open_default("./rocksdb/transact").unwrap();
     let mut iter = db.iterator(IteratorMode::Start);
     let mut transacts: Vec<Transact> = Vec::new();
     for (key, value) in iter {
