@@ -37,7 +37,8 @@ struct Block {
     transacts: Vec<Transact>,
     block_id: String,
     parent_block_id: String,
-    timestamp: String
+    timestamp: i64,
+    block_no: i64
 }
 
 // Поиск последнео блока по отсутствию хеша
@@ -75,13 +76,14 @@ pub fn create_block(req: &mut Request) -> IronResult<Response> {
         //println!("Saw {:?}", block);
     }
 
-    println!("blocks.len {:?}", blocks.len());
+    //println!("blocks.len {:?}", blocks.len());
 
     // Если блоков не было, то это первый блок.
     let mut parent_block_id = "genesis";
+    let mut block_no = 1;
 
     if (blocks.len() == 0) {
-        println!("blocks.len 0");
+        //println!("blocks.len 0");
     } else {
         // Если блоки были, то найти последний в цепочке,
         // Он ни для кого не является родителем.
@@ -89,12 +91,13 @@ pub fn create_block(req: &mut Request) -> IronResult<Response> {
 
         for block_out in &blocks {
             let block_out_id = &block_out.block_id;
-            println!("Saw block_out_id {:?}", block_out_id);
+            let block_out_no = &block_out.block_no;
+            //println!("Saw block_out_id {:?}", block_out_id);
             //let mut hasParent = false;
             let mut hasParents: Vec<bool> = Vec::new();
             for block_in in &blocks {
                 let block_in_parent_block_id = &block_in.parent_block_id;
-                println!("Saw block_in_parent_block_id {:?}", block_in_parent_block_id);
+                //println!("Saw block_in_parent_block_id {:?}", block_in_parent_block_id);
 
                 if (block_out_id == block_in_parent_block_id) {
                     hasParents.push(true);
@@ -120,25 +123,27 @@ pub fn create_block(req: &mut Request) -> IronResult<Response> {
                 
             }
 
-            println!("hasParent {}", hasParent);
+            //println!("hasParent {}", hasParent);
             if (hasParent == false) {
                 parent_block_id = block_out_id;
+                block_no = block_out_no + 1;
             }
             
         };
     }
 
-    println!("parent_block_id {}", parent_block_id);
+    //println!("parent_block_id {}", parent_block_id);
 
     let dateTimeUtc: DateTime<Utc> = Utc::now();
-    let timestamp = dateTimeUtc.timestamp().to_string();
-    println!("timestamp {:?}", timestamp);
+    let timestamp = dateTimeUtc.timestamp();
+    //println!("timestamp {:?}", timestamp);
 
     let block = Block {
         transacts: transacts,
         block_id: block_id.to_owned(),
         parent_block_id: parent_block_id.to_owned(),
-        timestamp: timestamp.to_owned()
+        timestamp: timestamp,
+        block_no: block_no
     };
 
     
