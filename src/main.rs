@@ -8,6 +8,7 @@ extern crate persistent;
 extern crate serde;
 
 extern crate rand;
+extern crate chrono;
 
 #[macro_use]
 extern crate serde_derive;
@@ -23,7 +24,7 @@ use iron::prelude::*;
 
 use router::{Router};
 
- mod handlers_transact;
+mod handlers_transact;
 mod handlers_block;
 
 const MAX_BODY_LENGTH: usize = 1024 * 1024 * 10;

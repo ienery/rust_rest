@@ -14,6 +14,7 @@ use serde;
 
 use std::str;
 use rand;
+use chrono::prelude::*;
 
 // FIXME дублирование
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -35,9 +36,12 @@ struct Transact {
 struct Block {
     transacts: Vec<Transact>,
     block_id: String,
-    parent_block_id: String
+    parent_block_id: String,
+    timestamp: String
 }
 
+// Поиск последнео блока по отсутствию хеша
+// Блоки без метки времени.
 pub fn create_block(req: &mut Request) -> IronResult<Response> {
     let content_type = "application/json".parse::<Mime>().unwrap();
     println!("=== create block ===");
@@ -126,10 +130,15 @@ pub fn create_block(req: &mut Request) -> IronResult<Response> {
 
     println!("parent_block_id {}", parent_block_id);
 
+    let dateTimeUtc: DateTime<Utc> = Utc::now();
+    let timestamp = dateTimeUtc.timestamp().to_string();
+    println!("timestamp {:?}", timestamp);
+
     let block = Block {
         transacts: transacts,
         block_id: block_id.to_owned(),
-        parent_block_id: parent_block_id.to_owned()
+        parent_block_id: parent_block_id.to_owned(),
+        timestamp: timestamp.to_owned()
     };
 
     
