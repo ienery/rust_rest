@@ -44,6 +44,7 @@ fn main() {
 
     router.post("/block/create", handlers_block::create_block, "create_block");
     router.post("/blocks/read", handlers_block::read_blocks, "read_blocks");
+    router.post("/blockstransacts/read", handlers_block::read_blocks_transacts, "read_blocks_transacts");
 
     let mut chain = Chain::new(router);
     chain.link_before(Read::<bodyparser::MaxBodyLength>::one(MAX_BODY_LENGTH));

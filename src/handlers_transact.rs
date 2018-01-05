@@ -14,6 +14,7 @@ use serde;
 
 use std::str;
 use rand;
+use chrono::prelude::*;
 
 pub fn handler(_: &mut Request) -> IronResult<Response> {
         Ok(Response::with((status::Ok, "OK")))
@@ -157,6 +158,7 @@ pub fn query_handler_all(req: &mut Request) -> IronResult<Response> {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 struct Record {
     user_id: String,
+    point_id: String,
 	period_year: String,
 	period_month: String,
 	readings: String,
@@ -166,7 +168,9 @@ struct Record {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 struct Transact {
     record: Record,
-    transact_id: String
+    transact_id: String,
+    parent_transact_id: String,
+    timestamp: i64
 }
 
 pub fn create_transact(req: &mut Request) -> IronResult<Response> {
@@ -181,12 +185,14 @@ pub fn create_transact(req: &mut Request) -> IronResult<Response> {
             //println!("record {:?}", record);
             if let &Object(ref record_transact) = transact {
                 //println!("record_deser {:?}", record_deser);
-
-                let transact_id = rand::random::<(u64)>().to_string();
                 //println!("record_id {:?}", record_id);
+
+                // Точка учета.
+                let point_id = record_transact["point_id"].as_str().unwrap().to_string();
 
                 let record = Record {
                     user_id: record_transact["user_id"].as_str().unwrap().to_string(),
+                    point_id: point_id.to_owned(),
                     period_year: record_transact["period_year"].as_str().unwrap().to_string(),
                     period_month: record_transact["period_month"].as_str().unwrap().to_string(),
                     readings: record_transact["readings"].as_str().unwrap().to_string(),
@@ -195,23 +201,66 @@ pub fn create_transact(req: &mut Request) -> IronResult<Response> {
 
                 //println!("record_data {:?}", record_data);
 
+                let mut parent_transact_id: String  = "genesis".to_string();
+                let mut transacts_point: Vec<Transact> = Vec::new();
+                // Найти транзакцию с предыдущей связанной записью (record),
+                // запись определять по идентификатору точки учета (record.point_id).
+
+                // Сначала поиск по транзакциям не упакованным в блок.
+                let mut db_transact = DB::open_default("./rocksdb/transact").unwrap();
+                let mut transact_iter = db_transact.iterator(IteratorMode::Start);
+                let mut transacts: Vec<Transact> = Vec::new();
+                for (key, value) in transact_iter {
+                    let k = str::from_utf8(&key).unwrap();
+                    let v = str::from_utf8(&value).unwrap();
+                    let transact: Transact = serde_json::from_str(&v).unwrap();
+                    transacts.push(transact);
+                }
+
+                for transact in transacts {
+                    let transact_point_id = transact.record.point_id.to_owned();
+                    if (point_id == transact_point_id.to_string()) {
+                        //println!("Saw transact {:?}", transact_point_id);
+                        transacts_point.push(transact);
+                    }
+                }
+                    
+                if (transacts_point.len() > 0) {
+                    println!(">0");
+                    // Сортировка по убыванию меток времени.
+                    transacts_point.sort_by(|a, b| b.timestamp.cmp(&a.timestamp));
+                    // Упростим - просто берем последнюю транзакцию.
+                    let transact_id = &transacts_point[0].transact_id;
+                    parent_transact_id = transact_id.to_string();
+                    
+                    // Найти транзакцию, которая не является предыдущей для других транзакций.
+                    //println!("last_transact_point {}", parent_transact_id);
+                    //parent_transact_id = parent_transact_id1;
+                } else {
+                    println!("=0");
+                }
+
+                let transact_id = rand::random::<(u64)>().to_string();
+                
+                let dateTimeUtc: DateTime<Utc> = Utc::now();
+                let timestamp = dateTimeUtc.timestamp();
+    
                 let transact = Transact {
                     record: record,
-                    transact_id: transact_id.to_owned()
+                    transact_id: transact_id.to_owned(),
+                    parent_transact_id: parent_transact_id.to_owned(),
+                    timestamp: timestamp
                 };
                 //println!("record {:?}", record);
 
                 let transact_json = serde_json::to_string(&transact).unwrap();
                 //println!("record_json {:?}", record_json);
-
-                let mut db = DB::open_default("./rocksdb/transact").unwrap();
-                db.put(&transact_id.as_bytes(), &transact_json.as_bytes()).unwrap();
+                db_transact.put(&transact_id.as_bytes(), &transact_json.as_bytes()).unwrap();
 
                 let result = json!({
                     "success": true,
                     "body": {
-                        "transactId": transact_id,
-                        "record": transact.record
+                        "transact": transact
                     }
                 });
 

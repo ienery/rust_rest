@@ -29,7 +29,8 @@ struct Record {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 struct Transact {
     record: Record,
-    transact_id: String
+    transact_id: String,
+    parent_transact_id: String
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -196,3 +197,39 @@ pub fn read_blocks(req: &mut Request) -> IronResult<Response> {
 
     Ok(Response::with((content_type, status::Ok, result.to_string())))
 }
+
+pub fn read_blocks_transacts(req: &mut Request) -> IronResult<Response> {
+    let content_type = "application/json".parse::<Mime>().unwrap();
+    println!("=== read blocks transacts ===");
+
+    let mut db = DB::open_default("./rocksdb/block").unwrap();
+    let mut iter = db.iterator(IteratorMode::Start);
+    let mut transact_all: Vec<Transact> = Vec::new();
+    for (key, value) in iter {
+        let k = str::from_utf8(&key).unwrap();
+        let v = str::from_utf8(&value).unwrap();
+        let block: Block = serde_json::from_str(&v).unwrap();
+
+        // Транзакции в блоке.
+        let transacts = block.transacts;
+        for transact in transacts {
+            println!("transact {:?}", transact);
+            transact_all.push(transact);
+        }
+
+        //blocks.push(block);
+    }
+
+    // for block in &blocks {
+    //     println!("Saw {:?}", block);
+    // };
+
+    let result = json!({
+        "success": true,
+        "body": {
+            "transact_all": transact_all
+        }
+    });
+
+    Ok(Response::with((content_type, status::Ok, result.to_string())))
+} 
