@@ -20,6 +20,7 @@ use chrono::prelude::*;
 #[derive(Debug, Clone, Serialize, Deserialize)]
 struct Record {
     user_id: String,
+    point_id: String,
 	period_year: String,
 	period_month: String,
 	readings: String,
@@ -30,7 +31,8 @@ struct Record {
 struct Transact {
     record: Record,
     transact_id: String,
-    parent_transact_id: String
+    parent_transact_id: String,
+    timestamp: i64
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -112,7 +114,7 @@ pub fn create_block(req: &mut Request) -> IronResult<Response> {
             //let hasParentsLen = hasParents.len();
 
             for (index, hasParentOne) in hasParents.into_iter().enumerate() {
-                println!("index hasParentOne {}: {}", index, hasParentOne);
+                //println!("index hasParentOne {}: {}", index, hasParentOne);
                 //println!("hasParents.len() {}", hasParentsLen);
                 
                 if (hasParentOne == true) {

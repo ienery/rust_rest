@@ -173,6 +173,16 @@ struct Transact {
     timestamp: i64
 }
 
+// FIXME дублирование.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+struct Block {
+    transacts: Vec<Transact>,
+    block_id: String,
+    parent_block_id: String,
+    timestamp: i64,
+    block_no: i64
+}
+
 pub fn create_transact(req: &mut Request) -> IronResult<Response> {
     let content_type = "application/json".parse::<Mime>().unwrap();
     println!("=== create transact ===");
@@ -226,7 +236,7 @@ pub fn create_transact(req: &mut Request) -> IronResult<Response> {
                 }
                     
                 if (transacts_point.len() > 0) {
-                    println!(">0");
+                    //println!(">0");
                     // Сортировка по убыванию меток времени.
                     transacts_point.sort_by(|a, b| b.timestamp.cmp(&a.timestamp));
                     // Упростим - просто берем последнюю транзакцию.
@@ -237,8 +247,77 @@ pub fn create_transact(req: &mut Request) -> IronResult<Response> {
                     //println!("last_transact_point {}", parent_transact_id);
                     //parent_transact_id = parent_transact_id1;
                 } else {
-                    println!("=0");
+                    //println!("=0");
+                    // Просмотр транзакций внутри блоков.
+                    let mut db_block = DB::open_default("./rocksdb/block").unwrap();
+
+                    let mut iter = db_block.iterator(IteratorMode::Start);
+                    let mut blocks: Vec<Block> = Vec::new();
+                    for (key, value) in iter {
+                        let k = str::from_utf8(&key).unwrap();
+                        let v = str::from_utf8(&value).unwrap();
+                        let block: Block = serde_json::from_str(&v).unwrap();
+                       
+                        //println!("Saw block {:?}", block);
+
+                        let mut transacts_point: Vec<Transact> = Vec::new();
+                        
+                        let mut transacts_point  = 0;
+                        // Транзакция содержащие запись (record) с point_id
+                        for transact in &block.transacts {
+                            let transact_point_id = transact.record.point_id.to_owned();
+                            if (point_id == transact_point_id.to_string()) {
+                                //println!("Saw transact {:?}", transact_point_id);
+                                transacts_point = transacts_point + 1;
+                            }
+                        }
+
+                        //println!("transacts_point {}", transacts_point);
+
+                        if (transacts_point > 0) {
+                            //println!("block.transacts_point.len > 0");
+                            blocks.push(block);
+                        } else {
+                            //println!("block.transacts_point.len = 0");
+                            continue;
+                        }
+                    }
+
+                    // Все блоки с транзакцией по point_id.
+                    // Сортировка блоков по убыванию меток времени.
+                    blocks.sort_by(|a, b| b.timestamp.cmp(&a.timestamp));
+                    for block_point_transacts in blocks {
+                        let mut flag_break = false;
+                        //println!("Saw blocks point_id timestamp {:?}", block_point_transacts.timestamp);
+                        let mut block_transacts = block_point_transacts.transacts;
+
+                        // Сортировка транзакции в блоке по убыванию меток времени.
+                        block_transacts.sort_by(|a, b| b.timestamp.cmp(&a.timestamp));
+
+                        for transact in block_transacts {
+                            //println!("Saw blocks transact timestamp {:?}", transact.timestamp);
+                            let transact_point_id = transact.record.point_id.to_owned();
+                            // Соответствие записи point_id
+                            if (transact_point_id == point_id) {
+                                //println!("transact.record {:?}", transact.record);
+                                // Упростим задачу - берем первую транзакцию по условию совпадения point_id записи
+                                // из отсортированных по времени, по убыванию timestamp.
+                                let transact_id = &transact.transact_id;
+                                parent_transact_id = transact_id.to_string();
+                                flag_break = true;
+                                break;
+                            }
+                        }
+
+                        if (flag_break == true) {
+                            break;
+                        }
+                        //println!("++++++");
+                    }
                 }
+
+                
+
 
                 let transact_id = rand::random::<(u64)>().to_string();
                 
