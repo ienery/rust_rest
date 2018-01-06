@@ -26,6 +26,7 @@ use router::{Router};
 
 mod handlers_transact;
 mod handlers_block;
+mod handlers_point;
 
 const MAX_BODY_LENGTH: usize = 1024 * 1024 * 10;
 
@@ -45,6 +46,9 @@ fn main() {
     router.post("/block/create", handlers_block::create_block, "create_block");
     router.post("/blocks/read", handlers_block::read_blocks, "read_blocks");
     router.post("/blockstransacts/read", handlers_block::read_blocks_transacts, "read_blocks_transacts");
+
+    router.post("/point/read", handlers_point::read_point, "read_point");
+    router.post("/points/read", handlers_point::read_points, "read_points");
 
     let mut chain = Chain::new(router);
     chain.link_before(Read::<bodyparser::MaxBodyLength>::one(MAX_BODY_LENGTH));
