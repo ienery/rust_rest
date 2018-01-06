@@ -16,13 +16,20 @@ extern crate serde_derive;
 #[macro_use]
 extern crate serde_json;
 
+extern crate mount;
+extern crate staticfile;
+
 use iron::{Iron};
 
 use persistent::Read;
 use iron::status;
 use iron::prelude::*;
 
+use mount::Mount;
 use router::{Router};
+use staticfile::Static;
+
+use std::path::Path;
 
 mod handlers_transact;
 mod handlers_block;
@@ -50,7 +57,12 @@ fn main() {
     router.post("/point/read", handlers_point::read_point, "read_point");
     router.post("/points/read", handlers_point::read_points, "read_points");
 
-    let mut chain = Chain::new(router);
+    let mut mount = Mount::new();
+    mount
+        .mount("/", Static::new(Path::new("static")))
+        .mount("/rest", router);
+        
+    let mut chain = Chain::new(mount);
     chain.link_before(Read::<bodyparser::MaxBodyLength>::one(MAX_BODY_LENGTH));
     Iron::new(chain).http("localhost:3000").unwrap();
 
