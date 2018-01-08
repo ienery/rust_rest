@@ -59,7 +59,10 @@ fn main() {
 
     let mut mount = Mount::new();
     mount
-        .mount("/", Static::new(Path::new("static")))
+        .mount("/", Static::new(Path::new("ui/out/index.html")))
+        .mount("/assets", Static::new(Path::new("ui/out/assets")))
+        .mount("/about", Static::new(Path::new("ui/out/index.html")))
+        .mount("/dashboard", Static::new(Path::new("ui/out/index.html")))
         .mount("/rest", router);
         
     let mut chain = Chain::new(mount);
