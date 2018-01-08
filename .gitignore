@@ -2,5 +2,7 @@
 /target/
 **/*.rs.bk
 /rocksdb/
+
 /ui/node_modules/
-/ui/out/
+/ui/out/*
+!/ui/out/index.html
