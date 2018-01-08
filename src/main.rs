@@ -19,6 +19,8 @@ extern crate serde_json;
 extern crate mount;
 extern crate staticfile;
 
+extern crate open;
+
 use iron::{Iron};
 
 use persistent::Read;
@@ -38,6 +40,9 @@ mod handlers_point;
 const MAX_BODY_LENGTH: usize = 1024 * 1024 * 10;
 
 fn main() {
+    open::that("http://localhost:3000");
+    println!("Rust REST starting ...");
+
     //let mut db = DB::open_default("./storage").unwrap();
 
     let mut router = Router::new();
@@ -61,8 +66,9 @@ fn main() {
     mount
         .mount("/", Static::new(Path::new("ui/out/index.html")))
         .mount("/assets", Static::new(Path::new("ui/out/assets")))
-        .mount("/about", Static::new(Path::new("ui/out/index.html")))
-        .mount("/dashboard", Static::new(Path::new("ui/out/index.html")))
+        .mount("/transact", Static::new(Path::new("ui/out/index.html")))
+        .mount("/transact-create", Static::new(Path::new("ui/out/index.html")))
+        .mount("/transact-details", Static::new(Path::new("ui/out/index.html")))
         .mount("/rest", router);
         
     let mut chain = Chain::new(mount);

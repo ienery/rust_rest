@@ -9,23 +9,33 @@ import {
 
 import Bundle from './../components/lazy-load/Bundle';
 
-import loadDashboard from 'bundle-loader?lazy&name=Dashboard!./../components/Dashboard';
-import loadAbout from 'bundle-loader?lazy&name=About!./../components/About';
+// BEGIN Компонент транзакций.
+import loadTransact from 'bundle-loader?lazy&name=Transact!./../modules/transact/Transact';
+import loadTransactCreate from 'bundle-loader?lazy&name=TransactCreate!./../modules/transact/Create/Create';
+import loadTransactDetails from 'bundle-loader?lazy&name=TransactDetails!./../modules/transact/Details/Details';
 
 // components load their module for initial visit
-const About = (props) => (
-    <Bundle load={loadAbout}>
-      {(About) => <About {...props}/>}
+const Transact = (props) => (
+    <Bundle load={loadTransact}>
+        {(Transact) => <Transact {...props}/>}
     </Bundle>
-  )
+);
   
-  const Dashboard = (props) => (
-    <Bundle load={loadDashboard}>
-      {(Dashboard) => <Dashboard {...props}/>}
+const TransactCreate = (props) => (
+    <Bundle load={loadTransactCreate}>
+        {(TransactCreate) => <TransactCreate {...props}/>}
     </Bundle>
-  )
-  
-  class App extends React.Component {
+);
+
+const TransactDetails = (props) => (
+    <Bundle load={loadTransactDetails}>
+        {(TransactDetails) => <TransactDetails {...props}/>}
+    </Bundle>
+);
+
+// END Компонент транзакций.
+
+class App extends React.Component {
     componentDidMount() {
       // preloads the rest
       //loadAbout(() => {})
@@ -35,21 +45,23 @@ const About = (props) => (
     render() {
       return (
         <div>
-        <Router>
-           <div>
-               <h1>Rust Rest!</h1>
-               <ul>
-                    <li><Link to={'/about'}>About</Link></li>
-                    <li><Link to={'/dashboard'}>Dashboard</Link></li>
-                </ul>
-               <Route path="/about" component={About}/>
-               <Route path="/dashboard" component={Dashboard}/>
-           </div>
-        </Router>
+            <Router>
+                <div>
+                    <h1>Rust Rest!</h1>
+                    <ul>
+                            <li><Link to={'/transact'}>Transact</Link></li>
+                            <li><Link to={'/transact-create'}>TransactCreate</Link></li>
+                            <li><Link to={'/transact-details'}>TransactDetails</Link></li>
+                        </ul>
+                    <Route path="/transact" component={Transact}/>
+                    <Route path="/transact-create" component={TransactCreate}/>
+                    <Route path="/transact-details" component={TransactDetails}/>
+                </div>
+            </Router>
         </div>
       )
     }
-  }
+}
   
 
   ReactDOM.render(<App/>, document.getElementById('root'))

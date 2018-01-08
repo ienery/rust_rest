@@ -7,6 +7,7 @@ module.exports = {
   entry: {
     vendor: ["react", "react-dom"],
     //main: './src/pages/main.tsx',
+    preload: './src/pages/preload.tsx',
     index: './src/pages/index.tsx'
   },
   plugins: [
@@ -34,6 +35,10 @@ module.exports = {
       {
         test: /\.tsx$/,
         loader: 'awesome-typescript-loader'
+      },
+      {
+        test: /\.css$/,
+        use: [ 'style-loader', 'css-loader' ]
       }
     ],
     
