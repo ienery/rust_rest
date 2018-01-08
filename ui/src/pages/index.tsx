@@ -7,14 +7,27 @@ import {
     Link
 } from 'react-router-dom';
 
+import Layout from '../../node_modules/antd/lib/layout/index';
+import Menu from '../../node_modules/antd/lib/menu/index';
+//import Breadcrumb from '../../node_modules/antd/lib/breadcrumb/index';
+
+const { Header, Footer, Sider, Content } = Layout;
+
 import Bundle from './../components/lazy-load/Bundle';
 
+import loadMain from 'bundle-loader?lazy&name=Main!./../modules/main/Main';
 // BEGIN Компонент транзакций.
 import loadTransact from 'bundle-loader?lazy&name=Transact!./../modules/transact/Transact';
 import loadTransactCreate from 'bundle-loader?lazy&name=TransactCreate!./../modules/transact/Create/Create';
 import loadTransactDetails from 'bundle-loader?lazy&name=TransactDetails!./../modules/transact/Details/Details';
 
 // components load their module for initial visit
+const Main = (props) => (
+    <Bundle load={loadMain}>
+        {(Main) => <Main {...props}/>}
+    </Bundle>
+);
+
 const Transact = (props) => (
     <Bundle load={loadTransact}>
         {(Transact) => <Transact {...props}/>}
@@ -46,23 +59,43 @@ class App extends React.Component {
       return (
         <div>
             <Router>
-                <div>
-                    <h1>Rust Rest!</h1>
-                    <ul>
-                            <li><Link to={'/transact'}>Transact</Link></li>
-                            <li><Link to={'/transact-create'}>TransactCreate</Link></li>
-                            <li><Link to={'/transact-details'}>TransactDetails</Link></li>
-                        </ul>
-                    <Route path="/transact" component={Transact}/>
-                    <Route path="/transact-create" component={TransactCreate}/>
-                    <Route path="/transact-details" component={TransactDetails}/>
-                </div>
+                <Layout className="layout">
+                    <Header>
+                    <div className="logo" />
+                    <Menu
+                        theme="dark"
+                        mode="horizontal"
+                        defaultSelectedKeys={['0']}
+                        style={{ lineHeight: '64px' }}
+                    >
+                        <Menu.Item key="0"><Link to={'/'}>Main</Link></Menu.Item>
+                        <Menu.Item key="1"><Link to={'/transact'}>Transact</Link></Menu.Item>
+                        <Menu.Item key="2"><Link to={'/transact-create'}>TransactCreate</Link></Menu.Item>
+                        <Menu.Item key="3"><Link to={'/transact-details'}>TransactDetails</Link></Menu.Item>
+                    </Menu>
+                    </Header>
+                    <Content style={{ padding: '0 50px' }}>
+                    {/* <Breadcrumb style={{ margin: '16px 0' }}>
+                        <Breadcrumb.Item>Home</Breadcrumb.Item>
+                        <Breadcrumb.Item>List</Breadcrumb.Item>
+                        <Breadcrumb.Item>App</Breadcrumb.Item>
+                    </Breadcrumb> */}
+                    <div style={{ background: '#fff', padding: 24, minHeight: 280 }}>
+                        <Route exact path="/" component={Main}/>
+                        <Route path="/transact" component={Transact}/>
+                        <Route path="/transact-create" component={TransactCreate}/>
+                        <Route path="/transact-details" component={TransactDetails}/>
+                    </div>
+                    </Content>
+                    <Footer style={{ textAlign: 'center' }}>
+                    Rust Rest by Ant Design
+                    </Footer>
+                </Layout>
             </Router>
         </div>
       )
     }
 }
   
-
-  ReactDOM.render(<App/>, document.getElementById('root'))
+ReactDOM.render(<App/>, document.getElementById('root'))
   
