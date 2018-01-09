@@ -6,3 +6,4 @@
 /ui/node_modules/
 /ui/out/*
 !/ui/out/index.html
+ui/package-lock.json
