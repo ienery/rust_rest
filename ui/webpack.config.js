@@ -23,7 +23,7 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.jsx$/,
+        test: /\.js(x?)$/,
         exclude: /(node_modules|bower_components)/,
         use: {
           loader: 'babel-loader',
@@ -33,7 +33,7 @@ module.exports = {
         }
       },
       {
-        test: /\.tsx$/,
+        test: /\.ts(x?)$/,
         loader: 'awesome-typescript-loader'
       },
       {
