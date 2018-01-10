@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { Row, Col } from '../../../node_modules/antd/lib/grid/index';
+import { Row, Col } from 'antd';
 
 /**
  * Компонент меню создание/просмотр транзакции.

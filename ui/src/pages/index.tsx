@@ -9,9 +9,7 @@ import {
     Link
 } from 'react-router-dom';
 
-import Layout from '../../node_modules/antd/lib/layout/index';
-import Menu from '../../node_modules/antd/lib/menu/index';
-//import Breadcrumb from '../../node_modules/antd/lib/breadcrumb/index';
+import { Layout, Menu } from 'antd';
 
 const { Header, Footer, Sider, Content } = Layout;
 
@@ -20,68 +18,26 @@ const Loading = () => {
   }
   
   const Main = Loadable({
-    loader: () => import('./../modules/main/Main'),
+    loader: () => import(/* webpackChunkName: "Main" */ './../modules/main/Main'),
     loading: Loading,
   });
   
   const Transact = Loadable({
-    loader: () => import('./../modules/transact/Transact'),
+    loader: () => import(/* webpackChunkName: "Transact" */ './../modules/transact/Transact'),
     loading: Loading,
   });
 
   const TransactCreate = Loadable({
-    loader: () => import('./../modules/transact/Create/Create'),
+    loader: () => import(/* webpackChunkName: "TransactCreate" */ './../modules/transact/Create/Create'),
     loading: Loading,
   });
 
   const TransactDetails = Loadable({
-    loader: () => import('./../modules/transact/Details/Details'),
+    loader: () => import(/* webpackChunkName: "TransactDetails" */ './../modules/transact/Details/Details'),
     loading: Loading,
   });
 
-  /*
-import Bundle from './../components/lazy-load/Bundle';
-
-import loadMain from 'bundle-loader?lazy&name=Main!./../modules/main/Main';
-// BEGIN Компонент транзакций.
-import loadTransact from 'bundle-loader?lazy&name=Transact!./../modules/transact/Transact';
-import loadTransactCreate from 'bundle-loader?lazy&name=TransactCreate!./../modules/transact/Create/Create';
-import loadTransactDetails from 'bundle-loader?lazy&name=TransactDetails!./../modules/transact/Details/Details';
-
-// components load their module for initial visit
-const Main = (props) => (
-    <Bundle load={loadMain}>
-        {(Main) => <Main {...props}/>}
-    </Bundle>
-);
-
-const Transact = (props) => (
-    <Bundle load={loadTransact}>
-        {(Transact) => <Transact {...props}/>}
-    </Bundle>
-);
-  
-const TransactCreate = (props) => (
-    <Bundle load={loadTransactCreate}>
-        {(TransactCreate) => <TransactCreate {...props}/>}
-    </Bundle>
-);
-
-const TransactDetails = (props) => (
-    <Bundle load={loadTransactDetails}>
-        {(TransactDetails) => <TransactDetails {...props}/>}
-    </Bundle>
-);
-*/
-// END Компонент транзакций.
-
 class App extends React.Component {
-    componentDidMount() {
-      // preloads the rest
-      //loadAbout(() => {})
-      //loadDashboard(() => {})
-    }
-  
     render() {
       return (
         <div>

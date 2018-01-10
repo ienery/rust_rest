@@ -1,10 +1,6 @@
 import * as React from 'react';
 
-import Form from '../../../../node_modules/antd/lib/form/index';
-import {FormProps} from '../../../../node_modules/antd/lib/form/form';
-
-import Button from '../../../../node_modules/antd/lib/button/index';
-import Input from '../../../../node_modules/antd/lib/input/index';
+import {Form, Button, Input} from 'antd';
 
 import {IRecord} from '../Models';
 
