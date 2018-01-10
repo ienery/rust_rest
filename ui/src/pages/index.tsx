@@ -1,6 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
+import Loadable from 'react-loadable';
+
 import {
     BrowserRouter as Router,
     Route,
@@ -13,6 +15,31 @@ import Menu from '../../node_modules/antd/lib/menu/index';
 
 const { Header, Footer, Sider, Content } = Layout;
 
+const Loading = () => {
+    return <div>Loading...</div>
+  }
+  
+  const Main = Loadable({
+    loader: () => import('./../modules/main/Main'),
+    loading: Loading,
+  });
+  
+  const Transact = Loadable({
+    loader: () => import('./../modules/transact/Transact'),
+    loading: Loading,
+  });
+
+  const TransactCreate = Loadable({
+    loader: () => import('./../modules/transact/Create/Create'),
+    loading: Loading,
+  });
+
+  const TransactDetails = Loadable({
+    loader: () => import('./../modules/transact/Details/Details'),
+    loading: Loading,
+  });
+
+  /*
 import Bundle from './../components/lazy-load/Bundle';
 
 import loadMain from 'bundle-loader?lazy&name=Main!./../modules/main/Main';
@@ -45,7 +72,7 @@ const TransactDetails = (props) => (
         {(TransactDetails) => <TransactDetails {...props}/>}
     </Bundle>
 );
-
+*/
 // END Компонент транзакций.
 
 class App extends React.Component {
