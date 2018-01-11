@@ -49,7 +49,7 @@ module.exports = {
   output: {
     filename: '[name].bundle.js',
     chunkFilename: '[name].bundle.js',
-    path: path.resolve(__dirname, 'out/assets/js/'),
-    publicPath: "/assets/js/"
+    path: path.resolve(__dirname, 'out/assets/js/bundles/'),
+    publicPath: "/assets/js/bundles/"
   }
 };

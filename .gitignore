@@ -4,7 +4,5 @@
 /rocksdb/
 
 /ui/node_modules/
-/ui/out/*
-!/ui/out/index.html
-ui/package-lock.json
-!out/assets/polyfill/ie11-polyfill.js
+/ui/package-lock.json
+/ui/out/assets/js/bundles/*
