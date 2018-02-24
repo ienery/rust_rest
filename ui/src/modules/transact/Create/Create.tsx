@@ -4,15 +4,16 @@ import { Row, Col } from 'antd';
 
 import Form from './Form';
 import {IRecord} from '../Models';
-import {createRecord} from '../Service';
+import {createTransact} from '../Service';
+
 /**
- * Компонент формы детального просмотра транзакции.
+ * Компонент создания транзакции.
  */
 class CreateTransact extends React.Component {
     static displayName = 'CreateTransacts';
 
-    createRecord = (record: IRecord) => {
-        createRecord(record);
+    createTransact = (record: IRecord) => {
+        createTransact(record);
     }
 
     render() {
@@ -26,7 +27,7 @@ class CreateTransact extends React.Component {
                 <Row type="flex" justify="start">
                     <Col span={6}>
                         <Form 
-                            createRecord={this.createRecord}
+                            createTransact={this.createTransact}
                         />
                     </Col>
                 </Row>

@@ -10,6 +10,7 @@ module.exports = {
     preload: './src/pages/preload.tsx',
     index: './src/pages/index.tsx'
   },
+  watch: true,
   plugins: [
     new webpack.optimize.CommonsChunkPlugin({
         names: ["vendor"],

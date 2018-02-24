@@ -40,7 +40,7 @@ mod handlers_point;
 const MAX_BODY_LENGTH: usize = 1024 * 1024 * 10;
 
 fn main() {
-    open::that("http://localhost:3000");
+    open::that("http://localhost:80");
     println!("Rust REST starting ...");
 
     //let mut db = DB::open_default("./storage").unwrap();
@@ -69,11 +69,12 @@ fn main() {
         .mount("/transact", Static::new(Path::new("ui/out/index.html")))
         .mount("/transact-create", Static::new(Path::new("ui/out/index.html")))
         .mount("/transact-details", Static::new(Path::new("ui/out/index.html")))
+        .mount("/transacts", Static::new(Path::new("ui/out/index.html")))
         .mount("/rest", router);
         
     let mut chain = Chain::new(mount);
     chain.link_before(Read::<bodyparser::MaxBodyLength>::one(MAX_BODY_LENGTH));
-    Iron::new(chain).http("localhost:3000").unwrap();
+    Iron::new(chain).http("localhost:80").unwrap();
 
     // fn handler(_: &mut Request) -> IronResult<Response> {
     //     Ok(Response::with((status::Ok, "OK")))

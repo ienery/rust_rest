@@ -12,11 +12,11 @@ function hasErrors(fieldsError) {
 }
 
 /**
- * @prop {Function} createRecord Действие при отправке формы.
+ * @prop {Function} createTransact Действие при отправке формы.
  * @prop {any} form Заглушка для компопнента.
  */
 interface IProps {
-    createRecord: (record: IRecord) => void,
+    createTransact: (record: IRecord) => void,
     form: any
 }
 
@@ -36,7 +36,7 @@ class CreateTransact extends React.Component<IProps, {}> {
         this.props.form.validateFields((err, values) => {
           if (!err) {
             //console.log('Received values of form: ', values);
-            this.props.createRecord(values);
+            this.props.createTransact(values);
           }
         });
     }
