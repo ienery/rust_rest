@@ -1,7 +1,7 @@
 import { cloneDeep, isUndefined } from 'lodash';
 
-import { IAppState, ITransactsState } from "../Models";
-import { EStatusResponse } from "../Enums";
+import { ITransactsState } from "../Models";
+import { EStatusResponse } from "../../../../Data/Enums";
 import { transactsInitialState } from "../InitialState";
 
 import {

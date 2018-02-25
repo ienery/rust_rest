@@ -1,5 +1,5 @@
-import { EStatusResponse } from '../Enums';
-import { readTransacts } from '../../modules/transact/Service';
+import { EStatusResponse } from '../../../../Data/Enums';
+import { readTransacts } from '../Service';
 
 export const GET_TRANSACTS_BEGIN = 'GET_TRANSACTS_BEGIN';
 export const GET_TRANSACTS_SUCCESS = 'GET_TRANSACTS_SUCCESS';

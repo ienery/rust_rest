@@ -1,5 +1,5 @@
-import {EStatusResponse} from './Enums';
-import {IAppState, ITransactsState} from './Models';
+import {EStatusResponse} from '../../../Data/Enums';
+import {ITransactsState} from '../Data/Models';
 
 /** 
  * Начальное состояние стора. 

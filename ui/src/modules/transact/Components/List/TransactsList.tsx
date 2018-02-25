@@ -2,10 +2,12 @@ import { includes } from 'lodash';
 import * as React from 'react';
 import { connect } from 'react-redux'
 
-import { readTransacts } from '../Service';
-import { ITransact } from '../Models';
-import { EStatusResponse } from '../../../state/Enums';
-import { loadTransactsAction } from '../../../state/actions/TransactsActions';
+import { readTransacts } from '../../Data/Service';
+import { ITransact } from '../../Models';
+import { EStatusResponse } from '../../../../Data/Enums';
+import { loadTransactsAction } from '../../Data/actions/TransactsActions';
+
+import { TransactListItem } from './TransactListItem';
 /** 
  * Свойства из connect State.
  * 
@@ -45,16 +47,34 @@ class TransactList extends React.Component<IProp, {}> {
         readTransacts();
     }
 
-    
+    /** 
+     * Отрисовка элементов списка.
+     */
+    renderItems (): JSX.Element {
+        const {data} = this.props;
+
+        return (
+            <ul>
+                {data.map((item, index) => {
+                    return (
+                        <TransactListItem
+                            item={item}
+                            key={index}
+                        />
+                    );
+                })}
+            </ul>
+        );
+    }
+
     render() {
         const {isLoading, hasError} = this.props;
 
-        //debugger;
         return (
             <div>
                 {isLoading ?
                     <div>Loading... </div> :
-                    <div>TransactList</div>
+                    this.renderItems()
                 }
             </div>
         );

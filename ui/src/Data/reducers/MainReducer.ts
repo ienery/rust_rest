@@ -1,6 +1,6 @@
 import { combineReducers } from 'redux';
 
-import { transactsReducer } from './TransactsReducer';
+import { transactsReducer } from '../../modules/transact/Data/reducers/TransactsReducer';
 
 import {IAppState} from '../Models';
 /** 

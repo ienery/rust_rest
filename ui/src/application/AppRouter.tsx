@@ -21,22 +21,22 @@ const Main = Loadable({
 });
   
 const Transact = Loadable({
-    loader: () => import(/* webpackChunkName: "Transact" */ './../modules/transact/Transact'),
+    loader: () => import(/* webpackChunkName: "Transact" */ './../modules/transact/Components/Transact'),
     loading: Loading,
 });
 
 const TransactCreate = Loadable({
-    loader: () => import(/* webpackChunkName: "TransactCreate" */ './../modules/transact/Create/Create'),
+    loader: () => import(/* webpackChunkName: "TransactCreate" */ './../modules/transact/Components/Create/Create'),
     loading: Loading,
 });
 
 const TransactsList = Loadable({
-    loader: () => import(/* webpackChunkName: "TransactList" */ './../modules/transact/List/TransactsList'),
+    loader: () => import(/* webpackChunkName: "TransactList" */ './../modules/transact/Components/List/TransactsList'),
     loading: Loading,
 });
 
   const TransactDetails = Loadable({
-    loader: () => import(/* webpackChunkName: "TransactDetails" */ './../modules/transact/Details/Details'),
+    loader: () => import(/* webpackChunkName: "TransactDetails" */ './../modules/transact/Components/Details/Details'),
     loading: Loading,
   });
 

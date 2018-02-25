@@ -5,7 +5,7 @@ import { Provider } from 'react-redux';
 import thunk from 'redux-thunk';
 
 import { AppRouter } from './AppRouter';
-import { mainReducer } from '../state/reducers/MainReducer';
+import { mainReducer } from '../Data/reducers/MainReducer';
 
 //import {initialState} from '../state/InitialState';
 
