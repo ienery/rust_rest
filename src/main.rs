@@ -1,4 +1,5 @@
 extern crate iron;
+extern crate hyper_native_tls;
 extern crate router;
 extern crate rocksdb;
 extern crate params;
@@ -26,6 +27,7 @@ use iron::{Iron};
 use persistent::Read;
 use iron::status;
 use iron::prelude::*;
+use hyper_native_tls::NativeTlsServer;
 
 use mount::Mount;
 use router::{Router};
@@ -40,7 +42,7 @@ mod handlers_point;
 const MAX_BODY_LENGTH: usize = 1024 * 1024 * 10;
 
 fn main() {
-    open::that("http://localhost:80");
+    open::that("https://localhost:3000");
     println!("Rust REST starting ...");
 
     //let mut db = DB::open_default("./storage").unwrap();
@@ -74,7 +76,9 @@ fn main() {
         
     let mut chain = Chain::new(mount);
     chain.link_before(Read::<bodyparser::MaxBodyLength>::one(MAX_BODY_LENGTH));
-    Iron::new(chain).http("localhost:80").unwrap();
+
+    let ssl = NativeTlsServer::new("ssl/identity.p12", "mypass").unwrap();
+    Iron::new(chain).https("localhost:3000", ssl).unwrap();
 
     // fn handler(_: &mut Request) -> IronResult<Response> {
     //     Ok(Response::with((status::Ok, "OK")))
