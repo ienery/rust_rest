@@ -1,6 +1,7 @@
 import { includes } from 'lodash';
 import * as React from 'react';
-import { connect } from 'react-redux'
+import { connect } from 'react-redux';
+import { push } from 'react-router-redux';
 
 import { readTransacts } from '../../Data/Service';
 import { ITransact } from '../../Models';
@@ -25,9 +26,11 @@ interface IPropsState {
  * Свойства из connect Dispatch.
  * 
  * @prop {Function} readTransacts Наличие ошибок.
+ * @prop {Function} push Работа с роутом.
  */
 interface IPropsDispatch {
     readTransacts: any;
+    push: any;
 }
 
 /** Свойства компонента. */
@@ -51,7 +54,7 @@ class TransactList extends React.Component<IProp, {}> {
      * Отрисовка элементов списка.
      */
     renderItems (): JSX.Element {
-        const {data} = this.props;
+        const {data, push} = this.props;
 
         return (
             <ul>
@@ -60,6 +63,7 @@ class TransactList extends React.Component<IProp, {}> {
                         <TransactListItem
                             item={item}
                             key={index}
+                            push={push}
                         />
                     );
                 })}
@@ -97,10 +101,10 @@ const mapDispatchToProps = (dispatch) => {
     return {
         readTransacts: () => {
             dispatch(loadTransactsAction());
+        },
+        push: (path) => {
+            dispatch(push(path));
         }
-    //   onClick: () => {
-    //     dispatch(setVisibilityFilter(ownProps.filter))
-    //   }
     }
 }
 
