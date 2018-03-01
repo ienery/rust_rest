@@ -9,6 +9,7 @@ import { EStatusResponse } from '../../../../Data/Enums';
 import { loadTransactsAction } from '../../Data/actions/TransactsActions';
 
 import { TransactListItem } from './TransactListItem';
+
 /** 
  * Свойства из connect State.
  * 

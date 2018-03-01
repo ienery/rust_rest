@@ -23,7 +23,10 @@ export class TransactListItem extends React.Component<IProps, {}> {
      * Обработчик клика на элементе.
      */
     handleClickItem = () => {
-        this.props.push('/transact-details');
+        this.props.push({
+            pathname: '/transact-details',
+            search: `?transactId=${this.props.item.transact_id}`
+          });
     }
 
     render () {
