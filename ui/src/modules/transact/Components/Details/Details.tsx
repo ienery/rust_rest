@@ -1,7 +1,11 @@
+import { isEmpty } from 'lodash'; 
 import * as React from 'react';
 import { connect } from 'react-redux';
 import  * as queryString from 'query-string';
 
+import {ITransact} from '../../Models';
+import {readTransact} from '../../Data/Service';
+import {DetailsItem} from './DetailsItem';
 /** 
  * Свойства из connect State.
  * 
@@ -11,6 +15,16 @@ import  * as queryString from 'query-string';
 interface IPropsState {
     location: any;
     transactId: string;
+    
+}
+
+/**
+ * Состояние компонента.
+ * 
+ * @prop {ITransact} value Транзакция.
+ */
+interface IState {
+    value: ITransact;
 }
 
 /** Свойства компонента. */
@@ -19,23 +33,43 @@ type IProp = IPropsState ;
 /**
  * Компонент формы детального просмотра транзакции.
  */
-class DetailsTransact extends React.Component<IProp, {}> {
+class DetailsTransact extends React.Component<IProp, IState> {
     static displayName = 'DetailsTransact';
 
+    state = {
+        value: null
+    };
+
+    componentDidMount() {
+        readTransact(this.props.transactId).then(
+            (result) => {
+                if (result) {
+                    //console.debug('result', result);
+                    this.setState({
+                        value: result
+                    })
+                }
+            }
+        )
+    };
+
     render() {
-        console.debug('transactId', this.props.transactId);
+        const {value} = this.state;
 
         return (
             <div>
-                DetailsTransact:
-                <h3>{this.props.transactId}</h3>
+                {!isEmpty(value) ? (
+                    <DetailsItem transact={value} />
+                ) : (
+                    <div>{'Loading...'}</div>
+                )}
             </div>
         );
-    }
+    };
 }
 
 const mapStateToProps = (state, ownProps) => {
-    console.debug('ownProps', ownProps);
+    //console.debug('ownProps', ownProps);
     const {location} = ownProps;
     const {transactId} = queryString.parse(location.search);
 

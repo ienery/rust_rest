@@ -8,17 +8,21 @@ import { resolve } from 'url';
  * 
  * @param {IRecord} record Данные записи транзакции.
  */
-export function createTransact (record: IRecord): void {
-    console.debug('service transact', record);
-    axios.post('/rest/transact/create', {
+export async function createTransact (record: IRecord) {
+    try {
+        const response = await axios.post('/rest/transact/create', {
             record: record
-        })
-        .then(function (response) {
-            console.log(response);
-        })
-        .catch(function (error) {
-            console.log(error);
         });
+        //console.debug('response', response);
+        if (response.data.success === true) {
+            return response.data.body;
+        } 
+            
+        return null;
+    } catch (error) {
+        //console.debug(error);
+        return false;
+    }
 };
 
 /**
@@ -38,5 +42,26 @@ export function readTransacts () {
                 reject(error);
             });
     });
-    
+};
+
+/**
+ * Чтение транзакции.
+ * 
+ * @param {string} transact_id Идентификатор транзакции.
+ */
+export async function readTransact (transact_id: string) {
+    try {
+        const response = await axios.post('/rest/transact/read', {
+            transact_id
+        });
+
+        //console.debug('response', response);
+        if (response.data.success === true) {
+            return response.data.body.transact;
+        }
+
+        return null;
+    } catch (error) {
+        return false;
+    }
 };

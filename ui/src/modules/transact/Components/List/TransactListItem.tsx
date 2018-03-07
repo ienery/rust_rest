@@ -8,10 +8,13 @@ import {ITransact} from '../../Models';
  * @prop {ITransact} item Элемент транзакция.
  * @prop {Function} push Работа с роутом.
  */
-interface IProps {
+interface IPropsDispatch {
     item: ITransact;
     push: any;
 }
+
+/** Свойства компонента. */
+type IProps = IPropsDispatch;
 
 /** 
  * Компонент просмотра транзакции в списке.
@@ -26,7 +29,7 @@ export class TransactListItem extends React.Component<IProps, {}> {
         this.props.push({
             pathname: '/transact-details',
             search: `?transactId=${this.props.item.transact_id}`
-          });
+        });
     }
 
     render () {

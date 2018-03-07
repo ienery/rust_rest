@@ -1,4 +1,6 @@
 import * as React from 'react';
+import { push } from 'react-router-redux';
+import { connect } from 'react-redux';
 
 import { Row, Col } from 'antd';
 
@@ -6,14 +8,39 @@ import Form from './Form';
 import {IRecord} from '../../Models';
 import {createTransact} from '../../Data/Service';
 
+
+
+/**
+ * Свойства из connect Dispatch.
+ * 
+ * @prop {Function} push Работа с роутом.
+ */
+interface IPropsDispatch {
+    push: any;
+}
+
 /**
  * Компонент создания транзакции.
  */
-class CreateTransact extends React.Component {
+class CreateTransact extends React.Component<IPropsDispatch, {}> {
     static displayName = 'CreateTransacts';
 
     createTransact = (record: IRecord) => {
-        createTransact(record);
+        createTransact(record).then(
+            (result) => {
+                if (result) {
+                    const {transact_id} = result.transact;
+
+                    this.props.push({
+                        pathname: '/transact-details',
+                        search: `?transactId=${transact_id}`
+                    });
+                } else {
+                    console.error('Error save');
+                }
+            }
+        );
+        
     }
 
     render() {
@@ -36,4 +63,17 @@ class CreateTransact extends React.Component {
     }
 }
 
-export default CreateTransact;
+const mapDispatchToProps = (dispatch) => {
+    return {
+        push: (path) => {
+            dispatch(push(path));
+        }
+    }
+}
+
+const CreateTransactConnect = connect(
+    null,
+    mapDispatchToProps
+)(CreateTransact);
+
+export default CreateTransactConnect;

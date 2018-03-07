@@ -35,12 +35,12 @@ interface IPropsDispatch {
 }
 
 /** Свойства компонента. */
-type IProp = IPropsState & IPropsDispatch;
+type IProps = IPropsState & IPropsDispatch;
 
 /**
  * Компонент просмотра списка транзакций.
  */
-class TransactList extends React.Component<IProp, {}> {
+class TransactList extends React.Component<IProps, {}> {
     static displayName = 'TransactList';
 
     componentDidMount() {
