@@ -5,17 +5,26 @@ const CleanWebpackPlugin = require('clean-webpack-plugin');
 
 module.exports = {
   entry: {
-    vendor: ["react", "react-dom"],
+    vendor: [
+        'react',
+        'react-dom',
+        'redux',
+        'react-redux',
+        'redux-thunk',
+        'react-router-redux',
+        'react-loadable',
+        'react-router-dom'
+    ],
     //main: './src/pages/main.tsx',
     preload: './src/pages/preload.tsx',
     index: './src/pages/index.tsx'
   },
   watch: true,
   plugins: [
-    new webpack.optimize.CommonsChunkPlugin({
-        names: ["vendor"],
-        minChunks: Infinity
-      }),
+    // new config.optimization.splitChunks({
+    //     names: ["vendor"],
+    //     minChunks: Infinity
+    //   }),
     //   new webpack.optimize.CommonsChunkPlugin({
     //     name: "common-pages",
     //     chunks: ["main", "index"]
@@ -46,6 +55,27 @@ module.exports = {
   },
   resolve: {
     extensions: ['.js', '.jsx', '.ts', '.tsx']
+  },
+  optimization: {
+      splitChunks: {
+            chunks: "async",
+            minSize: 30000,
+            minChunks: 1,
+            maxAsyncRequests: 5,
+            maxInitialRequests: 3,
+            name: true,
+            cacheGroups: {
+                default: {
+                    minChunks: 2,
+                    priority: -20,
+                    reuseExistingChunk: true
+                },
+                vendors: {
+                    test: /[\\/]node_modules[\\/]/,
+                    priority: -10
+                }
+      }
+    }
   },
   output: {
     filename: '[name].bundle.js',
