@@ -3,6 +3,10 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { push } from 'react-router-redux';
 
+import { Card, List } from 'antd';
+
+
+
 import { readTransacts } from '../../Data/Service';
 import { ITransact } from '../../Models';
 import { EStatusResponse } from '../../../../Data/Enums';
@@ -58,17 +62,16 @@ class TransactList extends React.Component<IProps, {}> {
         const {data, push} = this.props;
 
         return (
-            <ul>
-                {data.map((item, index) => {
-                    return (
-                        <TransactListItem
-                            item={item}
-                            key={index}
-                            push={push}
-                        />
-                    );
-                })}
-            </ul>
+            <Card title={`TransactsList`}>
+                <List
+                    itemLayout="horizontal"
+                    dataSource={data}
+                    renderItem={item => (
+                        <TransactListItem item={item} push={push} />
+                    )}
+                />
+            </Card>
+            
         );
     }
 

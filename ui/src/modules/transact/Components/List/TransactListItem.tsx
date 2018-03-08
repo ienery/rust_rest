@@ -1,6 +1,8 @@
 import * as React from 'react';
+import { List } from 'antd';
+import { Link } from 'react-router-dom';
 
-import {ITransact} from '../../Models';
+import {ITransact, IRecord} from '../../Models';
 
 /**
  * Свойства компонента.
@@ -24,6 +26,8 @@ export class TransactListItem extends React.Component<IProps, {}> {
 
     /**
      * Обработчик клика на элементе.
+     * 
+     * @deprecated
      */
     handleClickItem = () => {
         this.props.push({
@@ -32,17 +36,37 @@ export class TransactListItem extends React.Component<IProps, {}> {
         });
     }
 
-    render () {
+    /**
+     * Рендер части записи транзакции.
+     */
+    renderRecord = (record: IRecord): JSX.Element => {
+        return (
+            <div>
+                {record.point_id}
+            </div>
+        );
+    }
+
+    render() {
         const {item} = this.props;
 
-        return(
-            <li onClick={this.handleClickItem}>
-                {item.transact_id}
-                {/* {item.parent_transact_id}
-                {item.record.period_year}
-                {item.record.period_month}
-                {item.record.readings} */}
-            </li>
-        )
+        return (
+            <List.Item>
+                <List.Item.Meta
+                    title={
+                        <Link 
+                            to={{
+                                pathname: '/transact-details',
+                                search: `?transactId=${item.transact_id}`
+                            }}
+                        >
+                            {item.transact_id}
+                        </Link>
+                    }
+                    description={item.timestamp}
+                />
+                {this.renderRecord(item.record)}
+            </List.Item>
+        );
     }
 }
