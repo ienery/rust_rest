@@ -1,7 +1,6 @@
 import axios from 'axios';
 
 import {IRecord, ITransact} from '../Models';
-import { resolve } from 'url';
 
 /**
  * Cоздания записи транзакции.
@@ -35,7 +34,7 @@ export function readTransacts () {
             .then(function (response) {
                 //console.log(response);
                 //return response.data.body.transacts;
-                resolve(response.data);
+                resolve(response.data.body);
             })
             .catch(function (error) {
                 console.log(error);
@@ -54,6 +53,38 @@ export async function readTransact (transact_id: string) {
         const response = await axios.post('/rest/transact/read', {
             transact_id
         });
+
+        //console.debug('response', response);
+        if (response.data.success === true) {
+            return response.data.body.transact;
+        }
+
+        return null;
+    } catch (error) {
+        return false;
+    }
+};
+
+/**
+ * ИНтерфейс для функции чтения транзакции из блока.
+ * 
+ * @param {string} transact_id Идентификатор транзакции.
+ * @param {string} block_id Идентификатор блока.
+ * 
+ */
+interface ITransactBlock {
+    transact_id: string;
+    block_id: string;
+}
+
+/**
+ * Чтение транзакции из блока.
+ * 
+ * @param {ITransactBlock} params Параметры функции.
+ */
+export async function readBlockTransact (params: ITransactBlock) {
+    try {
+        const response = await axios.post('/rest/blocktransact/read', params);
 
         //console.debug('response', response);
         if (response.data.success === true) {

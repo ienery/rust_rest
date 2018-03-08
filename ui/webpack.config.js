@@ -19,7 +19,7 @@ module.exports = {
     preload: './src/pages/preload.tsx',
     index: './src/pages/index.tsx'
   },
-  watch: true,
+  watch: false,
   plugins: [
     // new config.optimization.splitChunks({
     //     names: ["vendor"],

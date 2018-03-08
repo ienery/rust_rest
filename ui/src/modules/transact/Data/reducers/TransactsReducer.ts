@@ -24,7 +24,12 @@ export function transactsReducer (state: ITransactsState, action) {
     let newState = cloneDeep(state);
 
     if (action.type === GET_TRANSACTS_BEGIN) {
-        newState.status = EStatusResponse.LOADING;
+        newState = {
+            status: EStatusResponse.LOADING,
+            transacts: null,
+            block: null
+        };
+
         return newState;
 
     } else if (action.type === GET_TRANSACTS_FAILURE) {
@@ -33,12 +38,18 @@ export function transactsReducer (state: ITransactsState, action) {
 
     } else if (action.type === GET_TRANSACTS_SUCCESS) {
         //console.debug('action', action);
-        //const data = action.result.data;
-        // const transacts = {
-        //     data: null,
-        //     status: EStatusResponse.SUCCESS
-        // };
-        newState.data = action.result.body.transacts;
+     
+        const {block, transacts} = action.result;
+        // результат транзакций в блоке.
+        if (block) {
+            newState.block = block;
+        } 
+        // результат транзакций вне блока.
+        else {
+            newState.transacts = transacts;
+        }
+
+        //newState.transacts = action.result.body.transacts;
         newState.status = EStatusResponse.SUCCESS;
         //console.debug('newState', newState);
         return newState;

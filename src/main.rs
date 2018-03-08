@@ -58,8 +58,11 @@ fn main() {
     router.post("/transacts/read", handlers_transact::read_transacts, "read_transacts");
 
     router.post("/block/create", handlers_block::create_block, "create_block");
+    router.post("/block/read", handlers_block::read_block, "read_block");
     router.post("/blocks/read", handlers_block::read_blocks, "read_blocks");
     router.post("/blockstransacts/read", handlers_block::read_blocks_transacts, "read_blocks_transacts");
+    router.post("/blockstransact/read", handlers_block::read_blocks_transact_one, "read_blocks_transact_one");
+    router.post("/blocktransact/read", handlers_block::read_block_transact, "read_block_transact");
 
     router.post("/point/read", handlers_point::read_point, "read_point");
     router.post("/points/read", handlers_point::read_points, "read_points");
@@ -78,7 +81,7 @@ fn main() {
     chain.link_before(Read::<bodyparser::MaxBodyLength>::one(MAX_BODY_LENGTH));
 
     let ssl = NativeTlsServer::new("ssl/identity.p12", "mypass").unwrap();
-    Iron::new(chain).https("localhost:3000", ssl).unwrap();
+    Iron::new(chain).http("localhost:3000", /*ssl*/).unwrap();
 
     // fn handler(_: &mut Request) -> IronResult<Response> {
     //     Ok(Response::with((status::Ok, "OK")))

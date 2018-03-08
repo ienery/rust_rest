@@ -4,16 +4,19 @@ import { Link } from 'react-router-dom';
 import { Card, Row, Col } from 'antd';
 
 import {ITransact} from '../../Models';
-
+import {EPreviousPage} from '../../Enums';
 /**
  * Свойства компонента.
  * 
  * @prop {ITransact} transact Транзакция.
+ * @prop {EPreviousPage} previous Страница - источник перехода.
+ * @prop {string} blockId Идентификаторо блока.
  */
 interface IProps {
     transact: ITransact;
+    previous: EPreviousPage;
+    blockId: string;
 }
-
 
 export class DetailsItem extends React.Component<IProps, {}> {
     
@@ -21,6 +24,28 @@ export class DetailsItem extends React.Component<IProps, {}> {
      * Рендер ссылки на список транзакций.
      */
     renderLink = (): JSX.Element => {
+        const {previous, blockId} = this.props;
+
+        let urlParams = {
+            to: {
+                pathname: '/transacts',
+                search: ''
+            },
+            linkLabel: 'To TransactList'
+        };
+       
+        switch (previous) {
+            // Переход со страниц создания или просмотра транзакций без блока.
+            case EPreviousPage.CREATE:
+            case EPreviousPage.NO_BLOCK:
+               break;
+            default:
+                if (blockId) {
+                    urlParams.to.search = `?blockId=${blockId}`;
+                    urlParams.linkLabel = 'To Block TransactList';
+                }
+        }
+
         return (
             <div 
                 style={{
@@ -28,14 +53,13 @@ export class DetailsItem extends React.Component<IProps, {}> {
                 }}
             >
                 <Link 
-                    to={{
-                        pathname: '/transacts'
-                    }}
+                    to={urlParams.to}
                 >
-                    To TransactList          
+                    {urlParams.linkLabel}    
                 </Link>
             </div>
         );
+            
     }
 
     render() {

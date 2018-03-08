@@ -7,7 +7,7 @@ import { Row, Col } from 'antd';
 import Form from './Form';
 import {IRecord} from '../../Models';
 import {createTransact} from '../../Data/Service';
-
+import {EPreviousPage} from '../../Enums';
 
 
 /**
@@ -30,10 +30,11 @@ class CreateTransact extends React.Component<IPropsDispatch, {}> {
             (result) => {
                 if (result) {
                     const {transact_id} = result.transact;
+                    let search = `?transactId=${transact_id}&previous=${EPreviousPage.CREATE}`;
 
                     this.props.push({
                         pathname: '/transact-details',
-                        search: `?transactId=${transact_id}`
+                        search
                     });
                 } else {
                     console.error('Error save');

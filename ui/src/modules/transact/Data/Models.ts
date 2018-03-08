@@ -1,12 +1,16 @@
 import {EStatusResponse} from '../../../Data/Enums';
 import {ITransact} from '../Models';
+import { IBlock } from '../../Block/Models';
 
 /**
  * Стейт Транзакция приложения.
  * 
- * @prop {any} transacts Транзакции.
+ * @prop {ITransact[]} transacts Транзакции.
+ * @prop {EStatusResponse} status Статус запроса.
+ * @prop {IBlock} block Блок транзакций.
  */
 export interface ITransactsState {
-    data: ITransact[];
-    status: EStatusResponse
+    transacts: ITransact[];
+    status: EStatusResponse;
+    block: IBlock;
 };

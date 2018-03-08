@@ -172,6 +172,7 @@ pub fn create_block(req: &mut Request) -> IronResult<Response> {
     Ok(Response::with((content_type, status::Ok, result.to_string())))
 }
 
+// Чтение всех блоков.
 pub fn read_blocks(req: &mut Request) -> IronResult<Response> {
     let content_type = "application/json".parse::<Mime>().unwrap();
     println!("=== read blocks ===");
@@ -200,6 +201,40 @@ pub fn read_blocks(req: &mut Request) -> IronResult<Response> {
     Ok(Response::with((content_type, status::Ok, result.to_string())))
 }
 
+#[derive(Debug, Clone, Deserialize)]
+struct RequestBlock {
+    block_id: String
+}
+
+// Чтение одного блока.
+pub fn read_block(req: &mut Request) -> IronResult<Response> {
+    let content_type = "application/json".parse::<Mime>().unwrap();
+    println!("=== read block ===");
+    let struct_body = req.get::<bodyparser::Struct<RequestBlock>>();
+
+    if let Ok(Some(request_read_block)) = struct_body {
+        let block_id = request_read_block.block_id;
+
+        let mut db = DB::open_default("./rocksdb/block").unwrap();
+        if let Ok(Some(block_data)) = db.get(&block_id.as_bytes()) {
+            let block_str = block_data.to_utf8().unwrap();
+            let block: Block = serde_json::from_str(&block_str).unwrap();
+
+            let result = json!({
+                "success": true,
+                "body": {
+                    "block": block
+                }
+            });
+
+            return Ok(Response::with((content_type, status::Ok, result.to_string())))
+        }
+    }
+
+    Ok(Response::with((content_type, status::Ok, "{}")))
+}
+
+// Транзакции во всех блоках.
 pub fn read_blocks_transacts(req: &mut Request) -> IronResult<Response> {
     let content_type = "application/json".parse::<Mime>().unwrap();
     println!("=== read blocks transacts ===");
@@ -234,4 +269,108 @@ pub fn read_blocks_transacts(req: &mut Request) -> IronResult<Response> {
     });
 
     Ok(Response::with((content_type, status::Ok, result.to_string())))
-} 
+}
+
+#[derive(Debug, Clone, Deserialize)]
+struct RequestBlockTransact {
+    block_id: String,
+    transact_id: String
+}
+
+// Чтение транзакции в конкретном блоке.
+pub fn read_block_transact(req: &mut Request) -> IronResult<Response> {
+    let content_type = "application/json".parse::<Mime>().unwrap();
+    println!("=== read block transact ===");
+    let struct_body = req.get::<bodyparser::Struct<RequestBlockTransact>>();
+
+    if let Ok(Some(request_read_block_transact)) = struct_body {
+        let block_id = request_read_block_transact.block_id;
+        let transact_id = request_read_block_transact.transact_id;
+
+        let mut db = DB::open_default("./rocksdb/block").unwrap();
+        if let Ok(Some(block_data)) = db.get(&block_id.as_bytes()) {
+            let block_str = block_data.to_utf8().unwrap();
+            let block: Block = serde_json::from_str(&block_str).unwrap();
+
+            // Транзакции в блоке.
+            let transacts = block.transacts;
+            
+            for transact in &transacts {
+                //println!("transact {:?}", transact);
+                if (transact_id == transact.transact_id) {
+
+                    let result = json!({
+                        "success": true,
+                        "body": {
+                            "transact": transact
+                        }
+                    });
+
+                    return Ok(Response::with((content_type, status::Ok, result.to_string())))
+                }   
+            }
+
+        }
+    }
+
+    Ok(Response::with((content_type, status::Ok, "{}")))
+}
+
+#[derive(Debug, Clone, Deserialize)]
+struct RequestTransact {
+    transact_id: String
+}
+
+// Одна транзакции во всех блоках.
+pub fn read_blocks_transact_one(req: &mut Request) -> IronResult<Response> {
+    let content_type = "application/json".parse::<Mime>().unwrap();
+    println!("=== read blocks transact one ===");
+    let struct_body = req.get::<bodyparser::Struct<RequestTransact>>();
+
+    if let Ok(Some(request_read_transact)) = struct_body {
+        let transact_id = request_read_transact.transact_id;
+        println!("transact_id {:?}", transact_id);
+
+        let mut db = DB::open_default("./rocksdb/block").unwrap();
+        let mut iter = db.iterator(IteratorMode::Start);
+        for (key, value) in iter {
+            let k = str::from_utf8(&key).unwrap();
+            let v = str::from_utf8(&value).unwrap();
+            let block: Block = serde_json::from_str(&v).unwrap();
+            // Транзакции в блоке.
+            let transacts = block.transacts;
+            for transact in transacts {
+                //transact_all.push(transact);
+
+                if (transact_id == transact.transact_id) {
+                    let result = json!({
+                        "success": true,
+                        "body": {
+                            "transact": transact
+                        }
+                    });
+
+                    return Ok(Response::with((content_type, status::Ok, result.to_string())))
+                } 
+
+            }
+
+            //blocks.push(block);
+        }
+    }
+    
+    
+    
+    // for block in &blocks {
+    //     println!("Saw {:?}", block);
+    // };
+
+    // let result = json!({
+    //     "success": true,
+    //     "body": {
+    //         "transact_all": transact_all
+    //     }
+    // });
+    Ok(Response::with((content_type, status::Ok, "{}")))
+    //Ok(Response::with((content_type, status::Ok, result.to_string())))
+}

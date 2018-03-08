@@ -3,16 +3,18 @@ import { List } from 'antd';
 import { Link } from 'react-router-dom';
 
 import {ITransact, IRecord} from '../../Models';
-
+import {EPreviousPage} from '../../Enums';
 /**
  * Свойства компонента.
  * 
  * @prop {ITransact} item Элемент транзакция.
  * @prop {Function} push Работа с роутом.
+ * @prop {string} [blockId] Идентификатор блока.
  */
 interface IPropsDispatch {
     item: ITransact;
     push: any;
+    blockId?: string;
 }
 
 /** Свойства компонента. */
@@ -23,18 +25,6 @@ type IProps = IPropsDispatch;
  */
 export class TransactListItem extends React.Component<IProps, {}> {
     static displayName = 'TransactListItem';
-
-    /**
-     * Обработчик клика на элементе.
-     * 
-     * @deprecated
-     */
-    handleClickItem = () => {
-        this.props.push({
-            pathname: '/transact-details',
-            search: `?transactId=${this.props.item.transact_id}`
-        });
-    }
 
     /**
      * Рендер части записи транзакции.
@@ -48,7 +38,21 @@ export class TransactListItem extends React.Component<IProps, {}> {
     }
 
     render() {
-        const {item} = this.props;
+        const {
+            blockId, 
+            item: {
+                transact_id,
+                timestamp,
+                record
+            }
+        } = this.props;
+
+        let search = `?transactId=${transact_id}`;
+        if (blockId) {
+            search += `&blockId=${blockId}`;
+        } else {
+            search += `&previous=${EPreviousPage.NO_BLOCK}`;
+        }
 
         return (
             <List.Item>
@@ -57,15 +61,15 @@ export class TransactListItem extends React.Component<IProps, {}> {
                         <Link 
                             to={{
                                 pathname: '/transact-details',
-                                search: `?transactId=${item.transact_id}`
+                                search
                             }}
                         >
-                            {item.transact_id}
+                            {transact_id}
                         </Link>
                     }
-                    description={item.timestamp}
+                    description={timestamp}
                 />
-                {this.renderRecord(item.record)}
+                {this.renderRecord(record)}
             </List.Item>
         );
     }

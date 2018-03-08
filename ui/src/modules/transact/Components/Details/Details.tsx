@@ -4,18 +4,23 @@ import { connect } from 'react-redux';
 import  * as queryString from 'query-string';
 
 import {ITransact} from '../../Models';
-import {readTransact} from '../../Data/Service';
-import {DetailsItem} from './DetailsItem';
+import {readTransact, readBlockTransact} from '../../Data/Service';
+import {EPreviousPage} from '../../Enums';
+import {DetailsItem} from './DetailsItem' ;
+
 /** 
  * Свойства из connect State.
  * 
  * @prop {any} location Router.
  * @prop {string} transactId Идентификатор транзакции.
+ * @prop {EPreviousPage} previous Страница - источник перехода.
+ * @prop {string} blockId Идентификатор блока.
  */
 interface IPropsState {
     location: any;
-    transactId: string;
-    
+    transactId: string; 
+    previous: EPreviousPage;
+    blockId: string;
 }
 
 /**
@@ -41,25 +46,56 @@ class DetailsTransact extends React.Component<IProp, IState> {
     };
 
     componentDidMount() {
-        readTransact(this.props.transactId).then(
-            (result) => {
-                if (result) {
-                    //console.debug('result', result);
-                    this.setState({
-                        value: result
-                    })
+        const {previous, transactId, blockId} = this.props;
+
+        switch (previous) {
+            // Переход со страниц создания или просмотра транзакций без блока.
+            case EPreviousPage.CREATE:
+            case EPreviousPage.NO_BLOCK:
+                readTransact(transactId).then(
+                    (result) => {
+                        if (result) {
+                            //console.debug('result', result);
+                            this.setState({
+                                value: result
+                            })
+                        }
+                    }
+                );
+                break;
+
+            default:
+                if (blockId) {
+                    const params = {
+                        transact_id: transactId,
+                        block_id:  blockId
+                    };
+                    readBlockTransact(params).then(
+                        (result) => {
+                            if (result) {
+                                this.setState({
+                                    value: result
+                                })
+                            }
+                        }
+                    );
                 }
-            }
-        )
+                break;
+        }
     };
 
     render() {
+        const {previous, blockId} = this.props;
         const {value} = this.state;
 
         return (
             <div>
                 {!isEmpty(value) ? (
-                    <DetailsItem transact={value} />
+                    <DetailsItem 
+                        transact={value}
+                        previous={previous}
+                        blockId={blockId}
+                    />
                 ) : (
                     <div>{'Loading...'}</div>
                 )}
@@ -71,11 +107,17 @@ class DetailsTransact extends React.Component<IProp, IState> {
 const mapStateToProps = (state, ownProps) => {
     //console.debug('ownProps', ownProps);
     const {location} = ownProps;
-    const {transactId} = queryString.parse(location.search);
+    const {
+        transactId,
+        previous = null,
+        blockId = null
+    } = queryString.parse(location.search);
 
     return {
         location,
-        transactId
+        transactId,
+        previous,
+        blockId
     }
 }
   

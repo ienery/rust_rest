@@ -1,5 +1,6 @@
 import { EStatusResponse } from '../../../../Data/Enums';
 import { readTransacts } from '../Service';
+import { readBlock } from '../../../Block/Data/Service';
 
 export const GET_TRANSACTS_BEGIN = 'GET_TRANSACTS_BEGIN';
 export const GET_TRANSACTS_SUCCESS = 'GET_TRANSACTS_SUCCESS';
@@ -50,4 +51,32 @@ export function loadTransactsActionFailure () {
         type: GET_TRANSACTS_FAILURE,
         status: EStatusResponse.FAILURE
     }
+}
+
+/**
+ * Экшн запроса транзакций в блоке.
+ * 
+ * @param {string} blockId Идентификатор блока.
+ */
+export function loadBlockTransactsAction (blockId: string) {
+    return function (dispatch) {
+        dispatch({
+            type: GET_TRANSACTS_BEGIN,
+            status: EStatusResponse.LOADING,
+        });
+        
+        readBlock(blockId).then(
+            (result) => {
+                //console.debug('result', result);
+                dispatch(loadTransactsActionSuccess(result))
+            },
+            (error) => {
+                dispatch(loadTransactsActionFailure())
+            }
+        );
+    };
+    // return {
+    //     type: GET_TRANSACTS_BEGIN,
+    //     status: EStatusResponse.LOADING
+    // }
 }
