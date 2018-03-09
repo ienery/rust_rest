@@ -20,11 +20,6 @@ const Main = Loadable({
     loading: Loading,
 });
   
-const Transact = Loadable({
-    loader: () => import(/* webpackChunkName: "Transact" */ './../modules/transact/Components/Transact'),
-    loading: Loading,
-});
-
 const TransactCreate = Loadable({
     loader: () => import(/* webpackChunkName: "TransactCreate" */ './../modules/transact/Components/Create/Create'),
     loading: Loading,
@@ -35,11 +30,15 @@ const TransactsList = Loadable({
     loading: Loading,
 });
 
-  const TransactDetails = Loadable({
+const TransactDetails = Loadable({
     loader: () => import(/* webpackChunkName: "TransactDetails" */ './../modules/transact/Components/Details/Details'),
     loading: Loading,
-  });
+});
 
+const BlocksList = Loadable({
+    loader: () => import(/* webpackChunkName: "BlocksList" */ './../modules/Block/Components/List/BlocksList'),
+    loading: Loading
+})
 /**
  * Свойства компонента.
  * 
@@ -66,10 +65,9 @@ class AppRouter extends React.Component<IProps, {}> {
                             style={{ lineHeight: '64px' }}
                         >
                             <Menu.Item key="0"><Link to={'/'}>Main</Link></Menu.Item>
-                            <Menu.Item key="1"><Link to={'/transact'}>Transact</Link></Menu.Item>
                             <Menu.Item key="2"><Link to={'/transact-create'}>TransactCreate</Link></Menu.Item>
-                            <Menu.Item key="3"><Link to={'/transact-details'}>TransactDetails</Link></Menu.Item>
                             <Menu.Item key="4"><Link to={'/transacts'}>TransactsList</Link></Menu.Item>
+                            <Menu.Item key="5"><Link to={'/blocks'}>BlocksList</Link></Menu.Item>
                         </Menu>
                         </Header>
                         <Content style={{ padding: '0 50px' }}>
@@ -80,10 +78,10 @@ class AppRouter extends React.Component<IProps, {}> {
                         </Breadcrumb> */}
                         <div style={{ background: '#fff', padding: 24, minHeight: 280 }}>
                             <Route exact path="/" component={Main}/>
-                            <Route path="/transact" component={Transact}/>
                             <Route path="/transact-create" component={TransactCreate}/>
                             <Route path="/transact-details" component={TransactDetails}/>
                             <Route path="/transacts" component={TransactsList}/>
+                            <Route path="/blocks" component={BlocksList}/>
                         </div>
                         </Content>
                         <Footer style={{ textAlign: 'center' }}>
