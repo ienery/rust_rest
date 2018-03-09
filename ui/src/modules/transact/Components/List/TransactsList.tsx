@@ -1,6 +1,7 @@
 import { includes, isEmpty } from 'lodash';
 import * as React from 'react';
 import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
 import { push } from 'react-router-redux';
 import  * as queryString from 'query-string';
 
@@ -141,23 +142,65 @@ class TransactList extends React.Component<IProps, {}> {
         let block_id  = !isEmpty(block) ? block.block_id : null;
 
         return (
-            <Card 
-                title={this.renderCardTitle()}
-            >
-                {!isEmpty(data) ? (
-                    <List
-                        itemLayout="horizontal"
-                        dataSource={data}
-                        renderItem={item => (
-                            <TransactListItem item={item} push={push} blockId={block_id} />
-                        )}
-                    />
-                ) : (
-                    <div>No data</div>
+            <div>
+                <div>{this.renderLink()}</div>
+                <Card 
+                    title={this.renderCardTitle()}
+                >
+                    {!isEmpty(data) ? (
+                        <List
+                            itemLayout="horizontal"
+                            dataSource={data}
+                            renderItem={item => (
+                                <TransactListItem item={item} push={push} blockId={block_id} />
+                            )}
+                        />
+                    ) : (
+                        <div>No data</div>
+                    )}
+                </Card>
+            </div>
+        );
+    }
+
+    /**
+     * Рендер ссылки на список блоков.
+     */
+    renderLink = (): JSX.Element => {
+        const {blockId} = this.props;
+
+        let urlParams = {
+            to: {
+                pathname: '/blocks',
+                search: ''
+            },
+            linkLabel: 'To All Blocks'
+        };
+       
+        // if (blockId) {
+        //     urlParams.to.search = `?blockId=${blockId}`;
+        //     urlParams.linkLabel = 'To All Blocks';
+        // }
+        
+        return (
+            <div>
+                {blockId && (
+                    <div 
+                        style={{
+                            margin: 8
+                        }}
+                    >
+                    <Link 
+                        to={urlParams.to}
+                    >
+                        {urlParams.linkLabel}    
+                    </Link>
+                </div>
                 )}
-            </Card>
+            </div>
             
         );
+            
     }
 
     render() {

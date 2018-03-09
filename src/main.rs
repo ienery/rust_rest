@@ -75,13 +75,14 @@ fn main() {
         .mount("/transact-create", Static::new(Path::new("ui/out/index.html")))
         .mount("/transact-details", Static::new(Path::new("ui/out/index.html")))
         .mount("/transacts", Static::new(Path::new("ui/out/index.html")))
+        .mount("/blocks", Static::new(Path::new("ui/out/index.html")))
         .mount("/rest", router);
         
     let mut chain = Chain::new(mount);
     chain.link_before(Read::<bodyparser::MaxBodyLength>::one(MAX_BODY_LENGTH));
 
     let ssl = NativeTlsServer::new("ssl/identity.p12", "mypass").unwrap();
-    Iron::new(chain).http("localhost:3000", /*ssl*/).unwrap();
+    Iron::new(chain).https("localhost:3000", ssl).unwrap();
 
     // fn handler(_: &mut Request) -> IronResult<Response> {
     //     Ok(Response::with((status::Ok, "OK")))

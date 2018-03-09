@@ -42,3 +42,19 @@ export async function readBlock (block_id: string) {
     } 
 }
 
+/**
+ * Чтение данных всех блоков.
+ */
+export async function readBlocks () {
+    try {
+        const response = await axios.post('/rest/blocks/read');
+        if (response.data.success === true) {
+            return response.data.body;
+        }
+
+        return false;
+    } catch (error) {
+        return false;
+    } 
+}
+
