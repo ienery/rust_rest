@@ -70,6 +70,7 @@ fn main() {
     let mut mount = Mount::new();
     mount
         .mount("/", Static::new(Path::new("ui/out/index.html")))
+        .mount("/favicon.ico", Static::new(Path::new("ui/out/favicon.ico")))
         .mount("/assets", Static::new(Path::new("ui/out/assets")))
         .mount("/transact", Static::new(Path::new("ui/out/index.html")))
         .mount("/transact-create", Static::new(Path::new("ui/out/index.html")))

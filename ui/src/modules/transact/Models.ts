@@ -6,7 +6,8 @@
  * @prop {string} period_year Идентификатор периода - год.
  * @prop {string} period_month Идентификатор периода - месяц.
  * @prop {string} readings Данные учета.
- * @prop {string} send_date_time Дата/время отправки.
+ * @prop {string} send_date_timestamp Временная метка отправки.
+ * @prop {string} period_timestamp Временная метка периода год+месяц.
  */
 export interface IRecord {
     user_id: string;
@@ -14,7 +15,8 @@ export interface IRecord {
     period_year: string;
     period_month: string;
     readings: string;
-    send_date_time: string
+    send_date_timestamp: string;
+    period_timestamp: string
 }
 
 /**

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { push } from 'react-router-redux';
 import { connect } from 'react-redux';
-
+import * as moment from 'moment';
 import { Row, Col } from 'antd';
 
 import Form from './Form';
@@ -9,6 +9,27 @@ import {IRecord} from '../../Models';
 import {createTransact} from '../../Data/Service';
 import {EPreviousPage} from '../../Enums';
 
+/**
+ * Функция для перековертирования данных перед сохраненем.
+ * 
+ * @param {IRecord} record Запись.
+ */
+function prepareRecordFields(record: IRecord): IRecord {
+    // преобразовать перед сохранением period_timestamp из строки YYYY-MM в ts
+    const newPeriodTimestamp = moment.utc(
+        `${record.period_year}-${record.period_month}`, 
+        'YYYY-MM'
+    ).unix().toString();
+    const newSendDateTimestamp = moment.utc().unix().toString();
+
+    const newRecord = {
+        ...record,
+        send_date_timestamp: newSendDateTimestamp,
+        period_timestamp: newPeriodTimestamp
+    };
+
+    return newRecord;
+}
 
 /**
  * Свойства из connect Dispatch.
@@ -25,8 +46,11 @@ interface IPropsDispatch {
 class CreateTransact extends React.Component<IPropsDispatch, {}> {
     static displayName = 'CreateTransacts';
 
+
     createTransact = (record: IRecord) => {
-        createTransact(record).then(
+        const newRecord = prepareRecordFields(record);
+
+        createTransact(newRecord).then(
             (result) => {
                 if (result) {
                     const {transact_id} = result.transact;

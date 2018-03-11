@@ -24,7 +24,7 @@ pub struct Record {
 	period_year: String,
 	period_month: String,
 	readings: String,
-    send_date_time: String
+    send_date_timestamp: String
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]

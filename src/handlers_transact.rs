@@ -162,7 +162,8 @@ struct Record {
 	period_year: String,
 	period_month: String,
 	readings: String,
-    send_date_time: String
+    send_date_timestamp: String,
+    period_timestamp: String
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -206,7 +207,8 @@ pub fn create_transact(req: &mut Request) -> IronResult<Response> {
                     period_year: record_transact["period_year"].as_str().unwrap().to_string(),
                     period_month: record_transact["period_month"].as_str().unwrap().to_string(),
                     readings: record_transact["readings"].as_str().unwrap().to_string(),
-                    send_date_time: record_transact["send_date_time"].as_str().unwrap().to_string()
+                    send_date_timestamp: record_transact["send_date_timestamp"].as_str().unwrap().to_string(),
+                    period_timestamp: record_transact["period_timestamp"].as_str().unwrap().to_string(),
                 };
 
                 //println!("record_data {:?}", record_data);

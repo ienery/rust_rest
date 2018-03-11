@@ -105,9 +105,13 @@ export class DetailsItem extends React.Component<IProps, {}> {
                             <Col span={6}>readings</Col>
                             <Col span={6}>{record.readings}</Col>
                         </Row>
+                        <Row style={{marginBottom: 8}}>
+                            <Col span={6}>send_date_timestamp</Col>
+                            <Col span={6}>{record.send_date_timestamp}</Col>
+                        </Row>
                         <Row>
-                            <Col span={6}>send_date_time</Col>
-                            <Col span={6}>{record.send_date_time}</Col>
+                            <Col span={6}>period_timestamp</Col>
+                            <Col span={6}>{record.period_timestamp}</Col>
                         </Row>
                     </Card>
                     <div

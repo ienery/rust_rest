@@ -123,16 +123,27 @@ class CreateTransact extends React.Component<IProps, {}> {
                     )}
                 </FormItem>
 
-                <FormItem
+                {/* <FormItem
                     {...formItemLayout}
-                    label="send_date_time"
+                    label="send_date_timestamp"
                 >
-                    {getFieldDecorator('send_date_time', {
-                        rules: [{ required: true, message: 'Please input send_date_time!' }],
+                    {getFieldDecorator('send_date_timestamp', {
+                        rules: [{ required: true, message: 'Please input send_date_timestamp!' }],
                     })(
-                        <Input placeholder="send_date_time" />
+                        <Input placeholder="send_date_timestamp" />
                     )}
-                </FormItem>
+                </FormItem> */}
+
+                {/* <FormItem
+                    {...formItemLayout}
+                    label="period_timestamp"
+                >
+                    {getFieldDecorator('period_timestamp', {
+                        rules: [{ required: true, message: 'Please input period_timestamp!' }],
+                    })(
+                        <Input placeholder="period_timestamp" />
+                    )}
+                </FormItem> */}
 
                 <FormItem {...tailFormItemLayout}>
                     <Button type="primary" htmlType="submit" className="transact-form-button">
