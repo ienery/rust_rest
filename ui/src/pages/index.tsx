@@ -5,7 +5,7 @@ app.renderReact();
 
 console.debug('index page');
 
-let socket = new WebSocket("ws://localhost:3001");
+let socket = new WebSocket("ws://localhost:3001/echo");
 
 socket.onopen = function() {
     console.debug("Соединение установлено.");

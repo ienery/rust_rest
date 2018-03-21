@@ -37,11 +37,13 @@ use staticfile::Static;
 use std::path::Path;
 use std::thread;
 
-use ws::listen;
+//use ws::listen;
 
 mod handlers_transact;
 mod handlers_block;
 mod handlers_point;
+
+mod ws_listener;
 
 const MAX_BODY_LENGTH: usize = 1024 * 1024 * 10;
 
@@ -49,11 +51,7 @@ fn main() {
 
     //websocket BEGIN
     thread::spawn(|| {
-        listen("localhost:3001", |out| {
-            move |msg| {
-                out.send(msg)
-            }
-        }).unwrap();
+        ws_listener::handler_ws();
     });
     //websocket END
     
