@@ -22,6 +22,7 @@ extern crate staticfile;
 
 extern crate open;
 extern crate ws;
+extern crate time;
 
 use iron::{Iron};
 
