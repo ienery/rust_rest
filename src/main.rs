@@ -45,11 +45,12 @@ mod handlers_block;
 mod handlers_point;
 
 mod ws_listener;
+mod test_module;
 
 const MAX_BODY_LENGTH: usize = 1024 * 1024 * 10;
 
 fn main() {
-
+    test_module::printer::print_in_module();
     //websocket BEGIN
     thread::spawn(|| {
         ws_listener::handler_ws();
