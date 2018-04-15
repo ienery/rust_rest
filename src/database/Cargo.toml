@@ -1,0 +1,12 @@
+[package]
+description = "database."
+name = "database"
+license = "GPL-3.0"
+version = "0.1.0"
+authors = ["IT"]
+
+[dependencies]
+serde_json = "*"
+serde_derive = "*"
+serde = "*"
+rocksdb = { git = "https://github.com/paritytech/rust-rocksdb" }

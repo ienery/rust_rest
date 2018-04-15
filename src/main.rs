@@ -24,6 +24,8 @@ extern crate open;
 extern crate ws;
 extern crate time;
 
+extern crate database;
+
 use iron::{Iron};
 
 use persistent::Read;
@@ -38,19 +40,16 @@ use staticfile::Static;
 use std::path::Path;
 use std::thread;
 
-//use ws::listen;
-
 mod handlers_transact;
 mod handlers_block;
 mod handlers_point;
 
 mod ws_listener;
-mod test_module;
+mod handlers;
 
 const MAX_BODY_LENGTH: usize = 1024 * 1024 * 10;
 
 fn main() {
-    test_module::printer::print_in_module();
     //websocket BEGIN
     thread::spawn(|| {
         ws_listener::handler_ws();
@@ -59,6 +58,8 @@ fn main() {
     
     open::that("http://localhost:3000");
     println!("Rust REST starting ...");
+
+    handlers::handler_block::h_test();
 
     //let mut db = DB::open_default("./storage").unwrap();
 

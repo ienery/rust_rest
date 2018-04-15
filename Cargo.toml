@@ -21,3 +21,4 @@ open = "1.2.1"
 hyper-native-tls = "0.2.4"
 ws = "0.7.3"
 time = "*"
+database = { path = "src/database" }
