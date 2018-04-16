@@ -7,6 +7,7 @@ import { routerMiddleware } from 'react-router-redux'
 import createHistory from 'history/createBrowserHistory'
 
 import { AppRouter } from './AppRouter';
+
 import { mainReducer } from '../Data/reducers/MainReducer';
 
 //import {initialState} from '../state/InitialState';

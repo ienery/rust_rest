@@ -5,17 +5,6 @@ const webpack = require('webpack');
 
 module.exports = {
   entry: {
-    vendor: [
-        'react',
-        'react-dom',
-        'redux',
-        'react-redux',
-        'redux-thunk',
-        'react-router-redux',
-        'react-loadable',
-        'react-router-dom'
-    ],
-    //main: './src/pages/main.tsx',
     preload: './src/pages/preload.tsx',
     index: './src/pages/index.tsx'
   },
@@ -65,14 +54,10 @@ module.exports = {
             maxInitialRequests: 3,
             name: true,
             cacheGroups: {
-                default: {
-                    minChunks: 2,
-                    priority: -20,
-                    reuseExistingChunk: true
-                },
-                vendors: {
+                commons: {
                     test: /[\\/]node_modules[\\/]/,
-                    priority: -10
+                    name: "vendors",
+                    chunks: "all"
                 }
       }
     }

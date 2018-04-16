@@ -39,6 +39,7 @@ const BlocksList = Loadable({
     loader: () => import(/* webpackChunkName: "BlocksList" */ './../modules/Block/Components/List/BlocksList'),
     loading: Loading
 })
+
 /**
  * Свойства компонента.
  * 
