@@ -187,12 +187,7 @@ pub fn get_last_block() -> Option<Block> {
                 let block = block_out.clone();
                 return Some(block);
             }
-
-            return None;
         }
-
-        return None;
     }
-
     None
 }
