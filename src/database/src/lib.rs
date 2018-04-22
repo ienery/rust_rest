@@ -8,6 +8,8 @@ extern crate serde_derive;
 #[macro_use]
 extern crate serde_json;
 
+extern crate rand;
+extern crate chrono;
 
 pub mod block;
 pub mod record;

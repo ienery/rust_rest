@@ -59,7 +59,7 @@ fn main() {
     open::that("http://localhost:3000");
     println!("Rust REST starting ...");
 
-    handlers::handler_block::h_test();
+    //handlers::handler_block::h_test();
 
     //let mut db = DB::open_default("./storage").unwrap();
 
@@ -73,12 +73,12 @@ fn main() {
     router.post("/transact/delete", handlers_transact::delete_transact, "delete_transact");
     router.post("/transacts/read", handlers_transact::read_transacts, "read_transacts");
 
-    router.post("/block/create", handlers_block::create_block, "create_block");
-    router.post("/block/read", handlers_block::read_block, "read_block");
-    router.post("/blocks/read", handlers_block::read_blocks, "read_blocks");
-    router.post("/blockstransacts/read", handlers_block::read_blocks_transacts, "read_blocks_transacts");
-    router.post("/blockstransact/read", handlers_block::read_blocks_transact_one, "read_blocks_transact_one");
-    router.post("/blocktransact/read", handlers_block::read_block_transact, "read_block_transact");
+    router.post("/block/create", handlers::handler_block::create_block, "create_block");
+    router.post("/block/read", handlers::handler_block::read_block, "read_block");
+    router.post("/blocks/read", handlers::handler_block::read_blocks, "read_blocks");
+    //router.post("/blockstransacts/read", handlers_block::read_blocks_transacts, "read_blocks_transacts");
+    //router.post("/blockstransact/read", handlers_block::read_blocks_transact_one, "read_blocks_transact_one");
+    router.post("/blocktransact/read", handlers::handler_block::read_block_transact, "read_block_transact");
 
     router.post("/point/read", handlers_point::read_point, "read_point");
     router.post("/points/read", handlers_point::read_points, "read_points");
