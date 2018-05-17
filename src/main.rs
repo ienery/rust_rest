@@ -1,5 +1,5 @@
 extern crate iron;
-extern crate hyper_native_tls;
+// extern crate hyper_native_tls;
 extern crate router;
 extern crate rocksdb;
 extern crate params;
@@ -31,7 +31,7 @@ use iron::{Iron};
 use persistent::Read;
 use iron::status;
 use iron::prelude::*;
-use hyper_native_tls::NativeTlsServer;
+// use hyper_native_tls::NativeTlsServer;
 
 use mount::Mount;
 use router::{Router};
@@ -98,6 +98,6 @@ fn main() {
     let mut chain = Chain::new(mount);
     chain.link_before(Read::<bodyparser::MaxBodyLength>::one(MAX_BODY_LENGTH));
 
-    let ssl = NativeTlsServer::new("ssl/identity.p12", "mypass").unwrap();
+    //let ssl = NativeTlsServer::new("ssl/identity.p12", "mypass").unwrap();
     Iron::new(chain).http("localhost:3000"/*, ssl*/).unwrap();
 }
